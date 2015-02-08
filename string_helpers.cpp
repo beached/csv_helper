@@ -11,8 +11,8 @@ namespace daw {
 				static std::stringstream ss( "" );
 				static std::unique_ptr<boost::posix_time::time_facet> facet;
 				if( !facet ) {
-					facet = daw::make_unique<boost::posix_time::time_facet>( 1 );
-					ss.imbue( std::locale( std::locale( locale_str ), facet.get( ) ) );
+					facet = daw::make_unique<boost::posix_time::time_facet>( 1u );
+					ss.imbue( std::locale( std::locale( locale_str.c_str( ) ), facet.get( ) ) );
 				}
 				clear( ss );
 				facet->format( format.c_str( ) );

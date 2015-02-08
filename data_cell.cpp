@@ -23,7 +23,7 @@ namespace daw {
 		using namespace daw::exception;
 		using daw::string::string_join;
 
-		const DataCell DataCell::s_empty_cell = DataCell( );
+		DataCell const DataCell::s_empty_cell = DataCell( );
 		namespace {
 			const std::string s_emptystring = std::string( );
 			const std::string s_default_timestamp_format = "%Y-%m-%d %H:%M:%S %Z";
@@ -40,7 +40,7 @@ namespace daw {
 				}
 				using charT = char;
 				// Can only set locale once per application start.  It was slow
-				static const std::locale loc = std::locale( locale_str );
+				static const std::locale loc = std::locale( locale_str.c_str( ) );
 				static const charT decimal_point = std::use_facet< std::numpunct<charT>>( loc ).decimal_point( );
 
 				bool is_negative = false;
@@ -89,7 +89,7 @@ namespace daw {
 
 		DataCell::DataCell( DataCell&& value ) noexcept: m_item( std::move( value.m_item ) ) { }
 
-		DataCell& DataCell::operator=(DataCell rhs) {
+		DataCell& DataCell::operator=(DataCell rhs) noexcept {
 			m_item = std::move( rhs.m_item );
 			return *this;
 		}
@@ -190,7 +190,7 @@ namespace daw {
 			static std::stringstream ss;
 			static std::unique_ptr<boost::posix_time::time_input_facet> facet;
 			if( !facet ) {
-				facet = daw::make_unique<boost::posix_time::time_input_facet>( 1 );
+				facet = daw::make_unique<boost::posix_time::time_input_facet>( 1u );
 				ss.imbue( std::locale( std::locale( ), facet.get( ) ) );
 			}
 			clear( ss );
@@ -208,12 +208,31 @@ namespace daw {
 			return DataCell( result );
 		}
 
-		const std::function<bool( const DataCell, const DataCell )> DataCell::cmp_integer = []( const DataCell A, const DataCell B ) { return A.integer( ) < B.integer( ); };
-		const std::function<bool( const DataCell, const DataCell )> DataCell::cmp_real = []( const DataCell A, const DataCell B ) { return A.real( ) < B.real( ); };
-		const std::function<bool( const DataCell, const DataCell )> DataCell::cmp_timestamp = []( const DataCell A, const DataCell B ) { return A.timestamp( ) < B.timestamp( ); };
-		const std::function<bool( const DataCell, const DataCell )> DataCell::cmp_other = []( const DataCell A, const DataCell B ) { return A.to_string( ).compare( B.to_string( ) ) < 0;  };
+		namespace {
+			using cmp_t = std::function<bool( DataCell const, DataCell const )>;
+			cmp_t gen_cmp_integer( ) {
+				return []( DataCell const A, DataCell const B ) { return A.integer( ) < B.integer( ); };
+			}
 
-		const std::function<bool( const DataCell, const DataCell )> DataCell::get_compare( const DataCell& cell ) {
+			cmp_t gen_cmp_real( ) {
+				return []( DataCell const A, DataCell const B ) { return A.real( ) < B.real( ); };
+			}
+
+			cmp_t gen_cmp_timestamp( ) {
+				return []( DataCell const A, DataCell const B ) { return A.timestamp( ) < B.timestamp( ); };
+			}
+
+			cmp_t gen_cmp_other( ) {
+				return []( DataCell const A, DataCell const B ) { return A.to_string( ).compare( B.to_string( ) ) < 0;  };
+			}
+		}
+	
+		const std::function<bool( DataCell const, DataCell const )> DataCell::cmp_integer = gen_cmp_integer( );
+		const std::function<bool( DataCell const, DataCell const )> DataCell::cmp_real = gen_cmp_real( );
+		const std::function<bool( DataCell const, DataCell const )> DataCell::cmp_timestamp = gen_cmp_timestamp( );
+		const std::function<bool( DataCell const, DataCell const )> DataCell::cmp_other = gen_cmp_other( );
+
+		const std::function<bool( DataCell const, DataCell const )> DataCell::get_compare( DataCell const& cell ) {
 			switch( cell.type( ) ) {
 			case DataCellType::integer:
 				return cmp_integer;
@@ -228,39 +247,39 @@ namespace daw {
 			}
 		}
 
-		int DataCell::compare( const DataCell& lhs, const DataCell& rhs ) {
+		int DataCell::compare( DataCell const& lhs, DataCell const& rhs ) {
 			return Variant::compare( lhs.m_item, rhs.m_item );
 		}
 
-		bool DataCell::operator==(const DataCell& rhs) const {
+		bool DataCell::operator==(DataCell const& rhs) const {
 			return compare( *this, rhs ) == 0;
 		}
 
-		bool DataCell::operator<(const DataCell& rhs) const {
+		bool DataCell::operator<(DataCell const& rhs) const {
 			return compare( *this, rhs ) < 0;
 		}
 
-		bool DataCell::operator!=(const DataCell& rhs) const {
+		bool DataCell::operator!=(DataCell const& rhs) const {
 			return compare( *this, rhs ) != 0;
 		}
 
-		bool DataCell::operator>(const DataCell& rhs) const {
+		bool DataCell::operator>(DataCell const& rhs) const {
 			return compare( *this, rhs ) > 0;
 		}
 
-		bool DataCell::operator<=(const DataCell& rhs) const {
+		bool DataCell::operator<=(DataCell const& rhs) const {
 			return compare( *this, rhs ) <= 0;
 		}
 
-		bool DataCell::operator>=(const DataCell& rhs) const {
+		bool DataCell::operator>=(DataCell const& rhs) const {
 			return compare( *this, rhs ) >= 0;
 		}
 
-		const bool is_numeric( const daw::data::DataCellType ct ) {
+		bool is_numeric( daw::data::DataCellType const & ct ) {
 			return daw::data::DataCellType::integer == ct || daw::data::DataCellType::real == ct;
 		}
 
-		const bool is_numeric( const daw::data::DataCell& value ) {
+		bool is_numeric( daw::data::DataCell const & value ) {
 			const auto ct = value.type( );
 			return is_numeric( ct );
 		}

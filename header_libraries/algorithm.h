@@ -47,7 +47,7 @@ namespace daw {
 			using std::begin;
 			using std::end;
 			auto result = begin( container );
-			safe_advance( container, result, distance );
+			safe_advance( container, result, static_cast<ptrdiff_t>( distance ) );
 			return result;
 		}
 

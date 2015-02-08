@@ -13,18 +13,14 @@
 
 namespace daw {
 	namespace filesystem {
-		class MemoryMappedFilePIMPL {
+		class MemoryMappedFileImpl {
 		private:
-			const size_t m_max_buff_size = 1048576;
-			const boost::filesystem::path m_file_path;
+//TODO remove size_t const m_max_buff_size = 1048576;
+			boost::filesystem::path m_file_path;
 			boost::iostreams::mapped_file_params m_mf_params;
 			boost::iostreams::mapped_file m_mf_file;
-
-			template<typename T>
-			friend void std::swap( T&, T& );
-
 		public:
-			MemoryMappedFilePIMPL( const std::string &filename, const bool readonly = true ) : m_file_path( filename ), m_mf_params( filename ) {
+			MemoryMappedFileImpl( const std::string &filename, const bool readonly = true ) : m_file_path( filename ), m_mf_params( filename ) {
 				m_mf_params.flags = boost::iostreams::mapped_file::mapmode::readwrite;
 				if( readonly ) {
 					//FIXME: seems to crash	m_mf_params.flags = boost::iostreams::mapped_file::mapmode::readonly;
@@ -38,20 +34,24 @@ namespace daw {
 				}
 			}
 
-			MemoryMappedFilePIMPL( ) = delete;
-			MemoryMappedFilePIMPL( MemoryMappedFilePIMPL&& other ) : m_mf_params( std::move( other.m_mf_params ) ), m_mf_file( std::move( other.m_mf_file ) ) { }
+			MemoryMappedFileImpl( ) = delete;
 
-			MemoryMappedFilePIMPL& operator=(MemoryMappedFilePIMPL&& rhs) {
+			MemoryMappedFileImpl( MemoryMappedFileImpl&& other ) : 
+				m_file_path( std::move( other.m_file_path ) ),
+				m_mf_params( std::move( other.m_mf_params ) ), 
+				m_mf_file( std::move( other.m_mf_file ) ) { }
+
+			MemoryMappedFileImpl& operator=(MemoryMappedFileImpl&& rhs) {
 				if( &rhs != this ) {
-					MemoryMappedFilePIMPL tmp( std::move( rhs ) );
-					using std::swap;
-					swap( *this, tmp );
+					m_file_path = std::move( rhs.m_file_path );
+					m_mf_params = std::move( rhs.m_mf_params ); 
+					m_mf_file = std::move( rhs.m_mf_file );
 				}
 				return *this;
 			}
 
-			MemoryMappedFilePIMPL( const MemoryMappedFilePIMPL& ) = delete;
-			MemoryMappedFilePIMPL& operator=(const MemoryMappedFilePIMPL&) = delete;
+			MemoryMappedFileImpl( const MemoryMappedFileImpl& ) = delete;
+			MemoryMappedFileImpl& operator=(const MemoryMappedFileImpl&) = delete;
 
 			void close( ) {
 				if( m_mf_file.is_open( ) ) {
@@ -59,7 +59,7 @@ namespace daw {
 				}
 			}
 
-			~MemoryMappedFilePIMPL( ) {
+			~MemoryMappedFileImpl( ) {
 				try {
 					close( );
 				} catch( ... ) {
@@ -71,32 +71,35 @@ namespace daw {
 				return m_mf_file.is_open( );
 			}
 
-			char& operator[]( const boost::iostreams::stream_offset position ) {
+			char& operator[]( size_t const & position ) {
 				return m_mf_file.data( )[position];
 			}
 
-			const char& operator[]( const boost::iostreams::stream_offset position ) const {
+			const char& operator[]( size_t const & position ) const {
 				return m_mf_file.data( )[position];
 			}
 
-			char* data( const boost::iostreams::stream_offset position = 0 ) const {
-				return m_mf_file.data( ) + position;
+			char* data( size_t const & position = 0 ) const {
+				return m_mf_file.data( ) + static_cast<boost::iostreams::stream_offset>( position );
 			}
 
-			void swap( MemoryMappedFilePIMPL& other ) {
+			void swap( MemoryMappedFileImpl& other ) {
 				using std::swap;
 				swap( m_mf_params, other.m_mf_params );
 				swap( m_mf_file, other.m_mf_file );
 			}
 
-			boost::iostreams::stream_offset size( ) const {
+			size_t size( ) const {
 				return m_mf_file.size( );
 			}
 		};
 
+		void swap( MemoryMappedFileImpl& lhs, MemoryMappedFileImpl& rhs ) noexcept {
+			lhs.swap( rhs );
+		}
 
 		// MemoryMappedFile public methods
-		MemoryMappedFile::MemoryMappedFile( const std::string &filename, const bool readonly ) :m_impl( daw::make_unique<MemoryMappedFilePIMPL>( filename, readonly ) ) { }
+		MemoryMappedFile::MemoryMappedFile( const std::string &filename, const bool readonly ) :m_impl( daw::make_unique<MemoryMappedFileImpl>( filename, readonly ) ) { }
 
 		MemoryMappedFile::MemoryMappedFile( MemoryMappedFile&& other ) noexcept: m_impl( std::move( other.m_impl ) ) { }
 
@@ -119,20 +122,21 @@ namespace daw {
 			return m_impl->is_open( );
 		}
 
-		char& MemoryMappedFile::operator[]( const boost::iostreams::stream_offset position ) {
+		char& MemoryMappedFile::operator[]( size_t const & position ) {
 			return m_impl->operator[]( position );
 		}
 
-		const char& MemoryMappedFile::operator[]( const boost::iostreams::stream_offset position ) const {
+		const char& MemoryMappedFile::operator[]( size_t const & position ) const {
 			return m_impl->operator[]( position );
 		}
 
-		char* MemoryMappedFile::data( const boost::iostreams::stream_offset position ) const {
+		char* MemoryMappedFile::data( size_t const & position ) const {
 			return m_impl->data( position );
 		}
 
-		boost::iostreams::stream_offset MemoryMappedFile::size( ) const {
+		size_t MemoryMappedFile::size( ) const {
 			return m_impl->size( );
 		}
 	}	// namespace filesystem
 }	// namespace daw
+

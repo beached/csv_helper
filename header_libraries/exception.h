@@ -6,10 +6,14 @@
 
 namespace daw {
 	namespace exception {
-#define MAKE_DAW_EXCEPTION( EXCEPTION_TYPE ) \
+	#define MAKE_DAW_EXCEPTION( EXCEPTION_TYPE ) \
 			struct EXCEPTION_TYPE: public std::runtime_error { \
-				template<typename StringType> EXCEPTION_TYPE( StringType const & msg ): std::runtime_error( msg ) { } \
-					}
+				EXCEPTION_TYPE( std::string const & msg ): std::runtime_error( msg.c_str( ) ) { } \
+				EXCEPTION_TYPE( char const * msg ): std::runtime_error( msg ) { } \
+				EXCEPTION_TYPE( EXCEPTION_TYPE const & ) = default; \
+				EXCEPTION_TYPE& operator=( EXCEPTION_TYPE const & ) = default; \
+				virtual ~EXCEPTION_TYPE( ) = default; \
+			};
 
 		MAKE_DAW_EXCEPTION( NotImplemented );
 		MAKE_DAW_EXCEPTION( FatalError );

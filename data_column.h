@@ -80,8 +80,8 @@ namespace daw {
 				return ret;
 			}
 
-			void erase_item( const size_type pos ) {
-				m_items.erase( m_items.begin( ) + pos );
+			void erase_item( size_type pos ) {
+				m_items.erase( m_items.begin( ) + static_cast<difference_type>( pos ) );
 			}
 
 			const std::string& header( ) const {

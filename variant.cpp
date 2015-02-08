@@ -14,19 +14,18 @@ namespace daw {
 				if( nullptr == value ) {
 					return value;
 				}
-				if( 0 > length ) {
-					length = strlen( value );
-					daw_throw_on_false( 0 > length, "Could not find valid string to copy" );
-				}
 				char* result = new_array_throw<char>( length + 1 );
 				result[length] = 0;
 				memcpy( result, value, length );
 
 				return result;
 			}
+			
 
-			const auto s_epoch = boost::posix_time::time_from_string( "1970-01-01 00:00:00.000" );
-			const std::string s_emptystring = "";
+			boost::posix_time::ptime get_epoch( ) {
+				static auto const s_epoch = boost::posix_time::time_from_string( "1970-01-01 00:00:00.000" );
+				return s_epoch;
+			}
 
 			/// <summary>We expect to own the string</summary>
 			const char* copy_string( const char* value ) noexcept {
@@ -44,27 +43,28 @@ namespace daw {
 				return result;
 			}
 
-				cstring copy_string( cstring value ) noexcept {
+			cstring copy_string( cstring value ) noexcept {
 				return std::move( value );
 			}
 
-				uint32_t ptime_to_uint32( boost::posix_time::ptime value ) noexcept {
-				const auto diff = value - s_epoch;
-				return diff.total_seconds( );
+			uint32_t ptime_to_uint32( boost::posix_time::ptime value ) noexcept {
+				const auto diff = value - get_epoch( );
+				assert( 0 <= diff.total_seconds( ) );
+				return static_cast<uint32_t>( diff.total_seconds( ) );
 			}
 
-				boost::posix_time::ptime uint32_to_ptime( long value ) noexcept {
-				return s_epoch + boost::posix_time::seconds( value );
+			boost::posix_time::ptime uint32_to_ptime( uint32_t value ) noexcept {
+				return get_epoch( ) + boost::posix_time::seconds( value );
 			}
 		}
 
 		variant_union_t::variant_union_t( ) noexcept: m_string( nullptr ) { }
 
-		variant_union_t::variant_union_t( const variant_union_t& value ) : m_string( create_copy( value.m_string, -1 ) ) { }
+		variant_union_t::variant_union_t( const variant_union_t& value ) : m_string( create_copy( value.m_string, std::numeric_limits<size_t>::max( ) ) ) { }
 
 		variant_union_t& variant_union_t::operator=(const variant_union_t& value) {
 			if( this != &value ) {
-				m_string = create_copy( value.m_string, -1 );
+				m_string = create_copy( value.m_string, std::numeric_limits<size_t>::max( ) );
 			}
 			return *this;
 		}
@@ -129,7 +129,7 @@ namespace daw {
 			}
 		}
 
-		Variant::Variant( cstring value ) : m_type( value.is_null( ) ? DataCellType::empty_string : DataCellType::string ), m_value( copy_when_needed( std::move( value ) ) ) { };
+		Variant::Variant( cstring value ) noexcept : m_type( value.is_null( ) ? DataCellType::empty_string : DataCellType::string ), m_value( copy_when_needed( std::move( value ) ) ) { };
 
 		const integer_t& Variant::integer( ) const {
 			dbg_throw_on_false( DataCellType::integer == m_type, "{0}: Attempt to extract an integer from a non-integer", __func__ );
@@ -155,7 +155,7 @@ namespace daw {
 			case DataCellType::timestamp:
 				return daw::string::ptime_to_string( timestamp( ), "%Y-%m-%d %H:%M:%S %Z", locale );
 			case DataCellType::empty_string:
-				return s_emptystring;
+				return "";
 			case DataCellType::string:
 				dbg_throw_on_false<NullPtrAccessException>( 0 != m_value.m_string, "{0}: m_value.m_string is NULL and m_type is not an empty string. This should never happen", __func__ );
 				return std::string( m_value.m_string );

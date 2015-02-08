@@ -8,7 +8,7 @@
 
 namespace daw {
 	namespace filesystem {
-		class MemoryMappedFilePIMPL;
+		class MemoryMappedFileImpl;
 
 		class MemoryMappedFile {
 		public:			
@@ -16,11 +16,11 @@ namespace daw {
 			MemoryMappedFile( const std::string &filename, const bool readonly = true );			
 			MemoryMappedFile& operator=(MemoryMappedFile&& rhs) noexcept;
 			
-			char* data( const boost::iostreams::stream_offset position = 0 ) const;
-			const char& operator[]( const boost::iostreams::stream_offset position ) const;
-			char& operator[]( const boost::iostreams::stream_offset position );
+			char* data( size_t const & position = 0 ) const;
+			const char& operator[]( size_t const & position ) const;
+			char& operator[]( size_t const & position );
 
-			boost::iostreams::stream_offset size( ) const;
+			size_t size( ) const;
 			bool is_open( ) const;
 			void close( );
 			~MemoryMappedFile( );
@@ -29,7 +29,7 @@ namespace daw {
 			MemoryMappedFile( const MemoryMappedFile& ) = delete;
 			MemoryMappedFile& operator=(const MemoryMappedFile&) = delete;
 		private:
-			std::unique_ptr<MemoryMappedFilePIMPL> m_impl;
+			std::unique_ptr<MemoryMappedFileImpl> m_impl;
 		};
 	}	// namespace filesystem
 }	// namespace daw

@@ -39,7 +39,7 @@ namespace daw {
 		class Variant {
 		public:
 			Variant( ) noexcept;
-			Variant& operator=(Variant rhs);
+			Variant& operator=(Variant rhs) noexcept;
 			Variant( Variant&& value ) noexcept;
 			~Variant( ) noexcept;
 			Variant( const Variant& ) = default;

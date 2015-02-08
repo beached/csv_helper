@@ -26,7 +26,7 @@ namespace daw {
 #else
 #pragma omp parallel for
 				for( ptrdiff_t n = 0; n < static_cast<ptrdiff_t>(container.size( )); ++n ) {
-					func( container.item(n) );
+					func( container.item( static_cast<size_t>( n ) ) );
 				}
 #endif
 			}
@@ -38,7 +38,7 @@ namespace daw {
 #else
 #pragma omp parallel for
 				for( ptrdiff_t n = 0; n < static_cast<ptrdiff_t>(container.size( )); ++n ) {
-					func( container.item(n) );
+					func( container.item( static_cast<size_t>( n ) ) );
 				}
 #endif
 			}
@@ -74,9 +74,9 @@ namespace daw {
 			}
 
 			template<typename ContainerType>
-			void erase_items( const ContainerType& container, const std::function<bool( typename ContainerType::const_reference )>& func ) {
+			void erase_items( ContainerType const & container, const std::function<bool( typename ContainerType::const_reference )>& func ) {
 				// Compile time error so this is not used
-				static_assert(std::is_const<T>::value, "Must pass a non-constant container to erase_items");
+				static_assert(std::is_const<ContainerType>::value, "Must pass a non-constant container to erase_items");
 			}
 
 			template<typename ContainerType>

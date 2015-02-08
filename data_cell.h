@@ -23,7 +23,7 @@ namespace daw {
 			DataCell( const DataCell& value ) = default;
 
 			DataCell( DataCell&& value ) noexcept;
-			DataCell& operator=(DataCell value);
+			DataCell& operator=(DataCell value) noexcept;
 			~DataCell( ) = default;
 
 			explicit DataCell( cstring value );
@@ -31,15 +31,15 @@ namespace daw {
 			explicit DataCell( real_t value );
 			explicit DataCell( timestamp_t value );
 
-			explicit operator bool( ) const;
+			explicit operator bool( ) const noexcept;
 
 			std::string string( ) const;
 			std::string to_string( std::string locale_str = "" ) const;
 			DataCellType type( ) const noexcept;
-			integer_t integer( ) const noexcept;
-			real_t real( ) const  noexcept;
+			integer_t integer( ) const;
+			real_t real( ) const;
 			timestamp_t timestamp( ) const;
-			real_t numeric( ) const  noexcept;
+			real_t numeric( ) const;
 			bool empty( ) const noexcept;
 
 			static DataCell from_string( cstring value, std::string locale_str = "" );
@@ -67,7 +67,7 @@ namespace daw {
 		};
 		static_assert(daw::traits::is_regular<DataCell>::value, "DataCell isn't regular");
 
-		const bool is_numeric( const daw::data::DataCellType ct );
-		const bool is_numeric( const daw::data::DataCell& value );
+		bool is_numeric( daw::data::DataCellType const & ct );
+		bool is_numeric( daw::data::DataCell const & value );
 	}	// namespace data
 }	// namespace daw

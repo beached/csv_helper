@@ -7,6 +7,7 @@
 #include "sparse_vector.h"
 #endif
 #include "header_libraries/expected.h"
+#include <boost/utility/string_ref.hpp>
 #include <functional>
 #include <string>
 #include <unordered_map>
@@ -22,7 +23,7 @@ namespace daw {
 		public:
 			using cell_type = DataCell;
 			using value_type = DataColumn < std::vector<cell_type> > ;
-			static_assert(daw::traits::is_regular<value_type>::value, "DataColumn isn't regular");
+			//TODO static_assert(daw::traits::is_regular<value_type>::value, "DataColumn isn't regular");
 			using values_type = std::vector < value_type > ;
 			using reference = value_type&;
 			using const_reference = const value_type&;
@@ -44,21 +45,21 @@ namespace daw {
 			DataTable( values_type&& columns );
 			DataTable( const values_type& columns );
 
-			reference item( const size_type column );
-			reference item( const std::string column );
-			const_reference item( const size_type column ) const;
-			const_reference item( const std::string column ) const;
+			reference item( size_type const & column );
+			reference item( boost::string_ref column );
+			const_reference item( size_type const & column ) const;
+			const_reference item( boost::string_ref column ) const;
 
-			reference operator[]( const size_type pos );
-			const_reference operator[]( const size_type pos ) const;
+			reference operator[]( size_type const & pos );
+			const_reference operator[]( size_type const & pos ) const;
 
-			reference operator[]( const std::string& column );
-			const_reference operator[]( const std::string& column ) const;
+			reference operator[]( boost::string_ref column );
+			const_reference operator[]( boost::string_ref column ) const;
 
 			size_type size( ) const noexcept;
 			bool empty( ) const noexcept;
 
-			difference_type get_column_index( const std::string col ) const;
+			size_type get_column_index( boost::string_ref col ) const;
 
 			iterator begin( );
 			iterator end( );
@@ -75,7 +76,7 @@ namespace daw {
 
 			void append( value_type value );
 
-			void erase_item( const size_type where );
+			void erase_item( size_type const & where );
 
 			iterator erase( iterator first );
 			iterator erase( iterator first, iterator last );
@@ -84,28 +85,28 @@ namespace daw {
 		private:
 			values_type m_items;
 		};
-		static_assert(daw::traits::is_regular<DataTable>::value, "DataTable isn't regular");
+		//TODO static_assert(daw::traits::is_regular<DataTable>::value, "DataTable isn't regular");
 
 		struct parse_csv_data_param {
 		private:
 			std::string m_file_name;
 			DataTable::size_type m_header_row;
-			std::function<bool( const std::string& )> m_column_filter;
+			std::function<bool( std::string const& )> m_column_filter;
 			std::function<void( std::string )> m_progress_cb;
 		public:
 			parse_csv_data_param( ) = delete;
 			parse_csv_data_param( std::string fileName, DataTable::size_type headerRow, std::function<bool( const std::string& )> columnFilter = nullptr, std::function<void( std::string )> progressCb = nullptr );
 			parse_csv_data_param( parse_csv_data_param&& param );
 			parse_csv_data_param( const parse_csv_data_param& param );
-			parse_csv_data_param& operator=(parse_csv_data_param param);
+			parse_csv_data_param& operator=(parse_csv_data_param param) noexcept;
 
 			bool operator==(const parse_csv_data_param& rhs) const = delete;
-			const std::string& file_name( ) const noexcept;
+			std::string const& file_name( ) const noexcept;
 			const DataTable::size_type& header_row( ) const noexcept;
-			const std::function<bool( const std::string& )>& column_filter( ) const noexcept;
+			const std::function<bool( std::string const & )>& column_filter( ) const noexcept;
 			const std::function<void( std::string )>& progress_cb( ) const noexcept;
 		};
-		static_assert(daw::traits::is_regular<parse_csv_data_param>::value, "parse_csv_data_param isn't regular");
+		//TOOD static_assert(daw::traits::is_regular<parse_csv_data_param>::value, "parse_csv_data_param isn't regular");
 
 		/// <summary>Parse a CSV File</summary>
 		/// <param name="file_name">Path to CSV Text File with header</param>
