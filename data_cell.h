@@ -12,17 +12,16 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include "workarounds.h"
+#include "header_libraries/workarounds.h"
 #include "header_libraries/daw_traits.h"
 
 namespace daw {
 	namespace data {
-
 		class DataCell {
 		public:
 			DataCell( ) = default;
 			DataCell( const DataCell& value ) = default;
-			
+
 			DataCell( DataCell&& value ) noexcept;
 			DataCell& operator=(DataCell value);
 			~DataCell( ) = default;
@@ -31,7 +30,7 @@ namespace daw {
 			explicit DataCell( integer_t value );
 			explicit DataCell( real_t value );
 			explicit DataCell( timestamp_t value );
-			
+
 			explicit operator bool( ) const;
 
 			std::string string( ) const;
@@ -59,7 +58,7 @@ namespace daw {
 			bool operator!=(const DataCell& rhs) const;
 			bool operator>(const DataCell& rhs) const;
 			bool operator<=(const DataCell& rhs) const;
-			bool operator>=( const DataCell& rhs) const;
+			bool operator>=(const DataCell& rhs) const;
 
 			// Data
 			static const DataCell s_empty_cell;

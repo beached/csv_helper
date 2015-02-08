@@ -28,7 +28,6 @@
     <ClInclude Include="data_table.h" />
     <ClInclude Include="data_types.h" />
     <ClInclude Include="defs.h" />
-    <ClInclude Include="exception.h" />
     <ClInclude Include="memorymappedfile.h" />
     <ClInclude Include="new_helper.h" />
     <ClInclude Include="string.h" />

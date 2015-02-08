@@ -48,9 +48,6 @@
     <ClInclude Include="variant.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="exception.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="new_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>

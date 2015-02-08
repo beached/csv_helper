@@ -1,12 +1,12 @@
 #pragma once
 
 #include <exception>
-#include "exception.h"
+#include "header_libraries/exception.h"
 #include "header_libraries/daw_string.h"
 #include <memory>
 
 template<typename T, typename... Args>
-T* new_throw( Args&&... args) {
+T* new_throw( Args&&... args ) {
 	std::unique_ptr<T> result;
 	try {
 		result = std::make_unique<T>( std::forward<Args>( args )... );

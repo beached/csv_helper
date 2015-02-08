@@ -7,8 +7,8 @@
 #include <boost/shared_array.hpp>
 #include <cinttypes>
 #include "header_libraries/daw_traits.h"
-#include "exception.h"
-#include "workarounds.h"
+#include "header_libraries/exception.h"
+#include "header_libraries/workarounds.h"
 namespace daw {
 	namespace data {
 		/// <summary>A simple variant that contains all needed data types</summary>

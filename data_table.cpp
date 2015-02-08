@@ -7,11 +7,11 @@
 #include "data_column.h"
 #include "data_table.h"
 #include "string_helpers.h"
-#include "exception.h"
+#include "header_libraries/exception.h"
 #include "header_libraries/expected.h"
 #include "new_helper.h"
 #include "header_libraries/daw_string.h"
-#include "workarounds.h"
+#include "header_libraries/workarounds.h"
 #include "memorymappedfile.h"
 #include <fstream>
 #include <functional>
