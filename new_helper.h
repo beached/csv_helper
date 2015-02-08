@@ -4,12 +4,13 @@
 #include "header_libraries/exception.h"
 #include "header_libraries/daw_string.h"
 #include <memory>
+#include "header_libraries/make_unique.h"
 
 template<typename T, typename... Args>
 T* new_throw( Args&&... args ) {
 	std::unique_ptr<T> result;
 	try {
-		result = std::make_unique<T>( std::forward<Args>( args )... );
+		result = daw::make_unique<T>( std::forward<Args>( args )... );
 	} catch( ... ) {
 		std::rethrow_exception( std::current_exception( ) );
 	}

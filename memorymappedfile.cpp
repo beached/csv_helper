@@ -2,6 +2,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>
+#include "header_libraries/make_unique.h"
 #include <cstdint>
 #include <iostream>
 #include <string>
@@ -95,7 +96,7 @@ namespace daw {
 
 
 		// MemoryMappedFile public methods
-		MemoryMappedFile::MemoryMappedFile( const std::string &filename, const bool readonly ) :m_impl( std::make_unique<MemoryMappedFilePIMPL>( filename, readonly ) ) { }
+		MemoryMappedFile::MemoryMappedFile( const std::string &filename, const bool readonly ) :m_impl( daw::make_unique<MemoryMappedFilePIMPL>( filename, readonly ) ) { }
 
 		MemoryMappedFile::MemoryMappedFile( MemoryMappedFile&& other ) noexcept: m_impl( std::move( other.m_impl ) ) { }
 

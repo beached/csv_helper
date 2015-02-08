@@ -9,6 +9,7 @@
 #include "string_helpers.h"
 #include "header_libraries/exception.h"
 #include "header_libraries/expected.h"
+#include "header_libraries/make_unique.h"
 #include "new_helper.h"
 #include "header_libraries/daw_string.h"
 #include "header_libraries/workarounds.h"
@@ -367,7 +368,7 @@ namespace daw {
 		Expected<DataTable> parse_csv_data( const std::string &file_name, const DataTable::size_type header_row, const std::function<bool( const std::string& )> column_filter, std::function<void( std::string )> progress_cb ) {
 			std::unique_ptr<daw::filesystem::MemoryMappedFile> buffer( nullptr );
 			try {
-				buffer = std::make_unique<daw::filesystem::MemoryMappedFile>( file_name, true );
+				buffer = daw::make_unique<daw::filesystem::MemoryMappedFile>( file_name, true );
 			} catch( const std::exception& ex ) {
 				return Expected<DataTable>::from_exception( ex );
 			} catch( ... ) {
