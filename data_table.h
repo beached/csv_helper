@@ -1,0 +1,128 @@
+#pragma once
+
+#include "data_types.h"
+#include "data_column.h"
+#include "data_cell.h"
+#if defined( USE_SPARSE_VECTOR ) && USE_SPARSE_VECTOR == 1
+#include "sparse_vector.h"
+#endif
+#include "header_libraries/expected.h"
+#include <functional>
+#include <string>
+#include <unordered_map>
+#include <vector>
+#include <list>
+#include "defs.h"
+#include "workarounds.h"
+#include "header_libraries/daw_traits.h"
+
+namespace daw {
+	namespace data {
+		class DataTable {
+		public:
+			using cell_type = DataCell;
+			using value_type = DataColumn < std::vector<cell_type> > ;
+			static_assert(daw::traits::is_regular<value_type>::value, "DataColumn isn't regular");
+			using values_type = std::vector < value_type > ;
+			using reference = value_type&;
+			using const_reference = const value_type&;
+			using iterator = values_type::iterator;
+			using const_iterator = values_type::const_iterator;
+			using reverse_iterator = values_type::reverse_iterator;
+			using const_reverse_iterator = values_type::const_reverse_iterator;
+			using difference_type = values_type::difference_type;
+			using size_type = values_type::size_type;
+
+			DataTable( ) = default;
+			DataTable( std::vector<value_type> columns );
+			DataTable( const DataTable& other );
+			DataTable( DataTable&& value ) noexcept;
+			DataTable& operator=(DataTable rhs) noexcept;
+			~DataTable( ) = default;
+			bool operator==(const DataTable& rhs) const = delete;
+
+			DataTable( values_type&& columns );
+			DataTable( const values_type& columns );
+
+			reference item( const size_type column );
+			reference item( const std::string column );
+			const_reference item( const size_type column ) const;
+			const_reference item( const std::string column ) const;
+
+			reference operator[]( const size_type pos );
+			const_reference operator[]( const size_type pos ) const;
+
+			reference operator[]( const std::string& column );
+			const_reference operator[]( const std::string& column ) const;
+
+			size_type size( ) const noexcept;
+			bool empty( ) const noexcept;
+
+			difference_type get_column_index( const std::string col ) const;
+
+			iterator begin( );
+			iterator end( );
+			const_iterator begin( ) const;
+			const_iterator end( ) const;
+			const_iterator cbegin( ) const;
+			const_iterator cend( ) const;
+			reverse_iterator rbegin( );
+			reverse_iterator rend( );
+			const_reverse_iterator rbegin( ) const;
+			const_reverse_iterator rend( ) const;
+			const_reverse_iterator crbegin( ) const;
+			const_reverse_iterator crend( ) const;
+
+			void append( value_type value );
+
+			void erase_item( const size_type where );
+
+			iterator erase( iterator first );
+			iterator erase( iterator first, iterator last );
+			void clear( );
+
+		private:
+			values_type m_items;
+		};
+		static_assert(daw::traits::is_regular<DataTable>::value, "DataTable isn't regular");
+
+		struct parse_csv_data_param {
+		private:
+			std::string m_file_name;
+			DataTable::size_type m_header_row;
+			std::function<bool( const std::string& )> m_column_filter;
+			std::function<void( std::string )> m_progress_cb;
+		public:
+			parse_csv_data_param( ) = delete;
+			parse_csv_data_param( std::string fileName, DataTable::size_type headerRow, std::function<bool( const std::string& )> columnFilter = nullptr, std::function<void( std::string )> progressCb = nullptr );
+			parse_csv_data_param( parse_csv_data_param&& param );
+			parse_csv_data_param( const parse_csv_data_param& param );
+			parse_csv_data_param& operator=(parse_csv_data_param param);
+
+			bool operator==(const parse_csv_data_param& rhs) const = delete;
+			const std::string& file_name( ) const noexcept;
+			const DataTable::size_type& header_row( ) const noexcept;
+			const std::function<bool( const std::string& )>& column_filter( ) const noexcept;
+			const std::function<void( std::string )>& progress_cb( ) const noexcept;
+		};
+		static_assert(daw::traits::is_regular<parse_csv_data_param>::value, "parse_csv_data_param isn't regular");
+
+		/// <summary>Parse a CSV File</summary>
+		/// <param name="file_name">Path to CSV Text File with header</param>
+		/// <param name="header_row">Numeric row in file that contains the header.  This will be the first line imported</param>
+		/// <param name="column_filter">A function that returns true if the column name is allowed</param>
+		/// <returns>A <c>DataTable</c> with the contents of the CSV File</returns>
+		Expected<DataTable> parse_csv_data( const std::string &file_name, const DataTable::size_type header_row, const std::function<bool( const std::string& )> column_filter = nullptr, std::function<void( std::string )> progress_cb = nullptr );
+		Expected<DataTable> parse_csv_data( const parse_csv_data_param& param );
+
+		namespace algorithm {
+			void erase_row( DataTable& table, const DataTable::size_type row );
+			void erase_rows( DataTable& table, const std::vector<DataTable::size_type> rows );
+
+			///
+			// Erases Rows whenever func returns true
+			///
+			void erase_rows( DataTable& table, const std::function<bool( const DataTable::size_type, const DataTable& )> func );
+		}
+	}
+}
