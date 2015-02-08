@@ -20,7 +20,7 @@ namespace daw {
 					SCOPE_EXIT {
 						m_cstr = tmp;
 					};
-					tmp = new_throw<CharType>( len + 1 );
+					tmp = new_array_throw<CharType>( len + 1 );
 					memcpy( tmp, c_str, len + 1 );
 				}
 			}
