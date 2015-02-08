@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <string>
 #include <utility>
-#include "header_libraries/daw_traits.h"
+#include "daw_traits.h"
 #include "workarounds.h"
 
 namespace daw {
@@ -20,21 +20,27 @@ namespace daw {
 		//////////////////////////////////////////////////////////////////////////
 		Expected( ) : m_value( ), m_exception( ), m_source( ExpectedSource::none ) { }
 
-		Expected( const Expected& other ) : m_value( other.m_value ), m_exception( other.m_exception ), m_source( other.m_source ) { }
+		Expected( Expected const & other ) = default;  
+		Expected& operator=(Expected const & rhs) = default;
 
-		Expected( Expected&& other ) noexcept: m_value( std::move( other.m_value ) ), m_exception( std::move( other.m_exception ) ), m_source( std::move( other.m_source ) ) { }
+		Expected( Expected&& other ) noexcept: 
+			m_value( std::move( other.m_value ) ), 
+			m_exception( std::move( other.m_exception ) ), 
+			m_source( std::move( other.m_source ) ) { }
 
-		Expected& operator=(Expected rhs) noexcept {
-			m_value = std::move( rhs.m_value );
-			m_exception = std::move( rhs.m_exception );
-			m_has_value = std::_Move( rhs.m_has_value );
+		Expected& operator=(Expected && rhs) noexcept {
+			if( this != &rhs ) {
+				m_value = std::move( rhs.m_value );
+				m_exception = std::move( rhs.m_exception );
+				m_source = std::move( rhs.m_source );
+			}
 			return *this;
 		}
 
 		~Expected( ) = default;
 
-		bool operator==(const Expected& rhs) const noexcept {
-			return rhs.m_value == m_value && rhs.m_exception == m_exception && rhs.m_has_value == m_has_value;
+		bool operator==(Expected const & rhs) const noexcept {
+			return rhs.m_value == m_value && rhs.m_exception == m_exception && rhs.m_source == m_source;
 		}
 
 			//////////////////////////////////////////////////////////////////////////
@@ -43,7 +49,7 @@ namespace daw {
 			Expected( ValueType value ) noexcept: m_value( std::move( value ) ), m_exception( ), m_source( ExpectedSource::value ) { }
 
 		template<class ExceptionType>
-		static Expected<ValueType> from_exception( const ExceptionType& exception ) {
+		static Expected<ValueType> from_exception( ExceptionType const & exception ) {
 			if( typeid(exception) != typeid(ExceptionType) ) {
 				throw std::invalid_argument( "slicing detected" );
 			}
@@ -73,7 +79,7 @@ namespace daw {
 			return m_value;
 		}
 
-		const ValueType& get( ) const {
+		ValueType const & get( ) const {
 			if( has_exception( ) ) {
 				std::rethrow_exception( m_exception );
 			}
@@ -86,7 +92,7 @@ namespace daw {
 				if( m_exception ) {
 					std::rethrow_exception( m_exception );
 				}
-			} catch( const std::exception& e ) {
+			} catch( std::exception const & e ) {
 				result = e.what( );
 			}
 			return result;

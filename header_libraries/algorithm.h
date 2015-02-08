@@ -44,7 +44,6 @@ namespace daw {
 
 		template<typename Container>
 		auto begin_at( Container& container, size_t distance ) -> decltype( std::begin( container ) ) {			
-			daw::exception::dbg_throw_on_false<std::out_of_range>( 0 <= distance, "begin_at requires a positive distance" );
 			using std::begin;
 			using std::end;
 			auto result = begin( container );
