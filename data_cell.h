@@ -45,20 +45,20 @@ namespace daw {
 			static DataCell from_string( cstring value, std::string locale_str = "" );
 			static DataCell from_time_string( std::string value, std::string format = "" );
 
-			static const std::function<bool( const DataCell, const DataCell )> cmp_integer;
-			static const std::function<bool( const DataCell, const DataCell )> cmp_real;
-			static const std::function<bool( const DataCell, const DataCell )> cmp_timestamp;
-			static const std::function<bool( const DataCell, const DataCell )> cmp_other;
-			static const std::function<bool( const DataCell, const DataCell )> get_compare( const DataCell& cell );
+			static const std::function<bool( DataCell const &, DataCell const & )> cmp_integer;
+			static const std::function<bool( DataCell const &, DataCell const & )> cmp_real;
+			static const std::function<bool( DataCell const &, DataCell const & )> cmp_timestamp;
+			static const std::function<bool( DataCell const &, DataCell const & )> cmp_other;
+			static const std::function<bool( DataCell const &, DataCell const & )> get_compare( const DataCell& cell );
 
-			static int compare( const DataCell& lhs, const DataCell& rhs );
+			static int compare( const DataCell& lhs, DataCell const & );
 
-			bool operator==(const DataCell& rhs) const;
-			bool operator<(const DataCell& rhs) const;
-			bool operator!=(const DataCell& rhs) const;
-			bool operator>(const DataCell& rhs) const;
-			bool operator<=(const DataCell& rhs) const;
-			bool operator>=(const DataCell& rhs) const;
+			bool operator==(DataCell const &) const;
+			bool operator<(DataCell const &) const;
+			bool operator!=(DataCell const &) const;
+			bool operator>(DataCell const &) const;
+			bool operator<=(DataCell const &) const;
+			bool operator>=(DataCell const &) const;
 
 			// Data
 			static const DataCell s_empty_cell;

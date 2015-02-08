@@ -94,7 +94,7 @@ namespace daw {
 			return *this;
 		}
 
-		DataCell::DataCell( cstring value ) : m_item( std::move( value ) ) { }
+			DataCell::DataCell( cstring value ) : m_item( std::move( value ) ) { }
 		DataCell::DataCell( integer_t value ) : m_item( std::move( value ) ) { }
 		DataCell::DataCell( real_t value ) : m_item( std::move( value ) ) { }
 		DataCell::DataCell( timestamp_t value ) : m_item( std::move( value ) ) { }
@@ -209,30 +209,30 @@ namespace daw {
 		}
 
 		namespace {
-			using cmp_t = std::function<bool( DataCell const, DataCell const )>;
+			using cmp_t = std::function < bool( DataCell const &, DataCell const & ) > ;
 			cmp_t gen_cmp_integer( ) {
-				return []( DataCell const A, DataCell const B ) { return A.integer( ) < B.integer( ); };
+				return []( DataCell const & A, DataCell const & B ) { return A.integer( ) < B.integer( ); };
 			}
 
 			cmp_t gen_cmp_real( ) {
-				return []( DataCell const A, DataCell const B ) { return A.real( ) < B.real( ); };
+				return []( DataCell const & A, DataCell const & B ) { return A.real( ) < B.real( ); };
 			}
 
 			cmp_t gen_cmp_timestamp( ) {
-				return []( DataCell const A, DataCell const B ) { return A.timestamp( ) < B.timestamp( ); };
+				return []( DataCell const & A, DataCell const & B ) { return A.timestamp( ) < B.timestamp( ); };
 			}
 
 			cmp_t gen_cmp_other( ) {
-				return []( DataCell const A, DataCell const B ) { return A.to_string( ).compare( B.to_string( ) ) < 0;  };
+				return []( DataCell const & A, DataCell const & B ) { return A.to_string( ).compare( B.to_string( ) ) < 0;  };
 			}
 		}
-	
-		const std::function<bool( DataCell const, DataCell const )> DataCell::cmp_integer = gen_cmp_integer( );
-		const std::function<bool( DataCell const, DataCell const )> DataCell::cmp_real = gen_cmp_real( );
-		const std::function<bool( DataCell const, DataCell const )> DataCell::cmp_timestamp = gen_cmp_timestamp( );
-		const std::function<bool( DataCell const, DataCell const )> DataCell::cmp_other = gen_cmp_other( );
 
-		const std::function<bool( DataCell const, DataCell const )> DataCell::get_compare( DataCell const& cell ) {
+		const std::function<bool( DataCell const &, DataCell const & )> DataCell::cmp_integer = gen_cmp_integer( );
+		const std::function<bool( DataCell const &, DataCell const & )> DataCell::cmp_real = gen_cmp_real( );
+		const std::function<bool( DataCell const &, DataCell const & )> DataCell::cmp_timestamp = gen_cmp_timestamp( );
+		const std::function<bool( DataCell const &, DataCell const & )> DataCell::cmp_other = gen_cmp_other( );
+
+		const std::function<bool( DataCell const &, DataCell const & )> DataCell::get_compare( DataCell const & cell ) {
 			switch( cell.type( ) ) {
 			case DataCellType::integer:
 				return cmp_integer;
@@ -247,31 +247,31 @@ namespace daw {
 			}
 		}
 
-		int DataCell::compare( DataCell const& lhs, DataCell const& rhs ) {
+		int DataCell::compare( DataCell const & lhs, DataCell const & rhs ) {
 			return Variant::compare( lhs.m_item, rhs.m_item );
 		}
 
-		bool DataCell::operator==(DataCell const& rhs) const {
+		bool DataCell::operator==(DataCell const & rhs) const {
 			return compare( *this, rhs ) == 0;
 		}
 
-		bool DataCell::operator<(DataCell const& rhs) const {
+		bool DataCell::operator<(DataCell const & rhs) const {
 			return compare( *this, rhs ) < 0;
 		}
 
-		bool DataCell::operator!=(DataCell const& rhs) const {
+		bool DataCell::operator!=(DataCell const & rhs) const {
 			return compare( *this, rhs ) != 0;
 		}
 
-		bool DataCell::operator>(DataCell const& rhs) const {
+		bool DataCell::operator>(DataCell const & rhs) const {
 			return compare( *this, rhs ) > 0;
 		}
 
-		bool DataCell::operator<=(DataCell const& rhs) const {
+		bool DataCell::operator<=(DataCell const & rhs) const {
 			return compare( *this, rhs ) <= 0;
 		}
 
-		bool DataCell::operator>=(DataCell const& rhs) const {
+		bool DataCell::operator>=(DataCell const & rhs) const {
 			return compare( *this, rhs ) >= 0;
 		}
 
