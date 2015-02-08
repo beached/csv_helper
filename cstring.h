@@ -30,13 +30,14 @@ namespace daw {
 			CString& operator=(const CString& rhs) = delete;
 
 			CString( CString&& value ) noexcept: m_cstr( std::move( value.m_cstr ) ), m_local_string( std::move( value.m_local_string ) ) {
-				value.m_cstr = nullptr;
+				value.nullify( );
 			}
+
 			CString& operator=(CString&& rhs) {
 				if( this != &rhs ) {
-					m_cstr = std::move( other.m_cstr );
-					other.m_cstr = nullptr;
-					m_local_string = std::move( other.m_local_string );
+					m_cstr = std::move( rhs.m_cstr );
+					m_local_string = std::move( rhs.m_local_string );
+					rhs.nullify( );
 				}
 				return *this;
 			}
