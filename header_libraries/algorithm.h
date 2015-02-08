@@ -1,7 +1,25 @@
-// Copyright Darrell Wright All Rights Reserved
-// Algorithms header for working with sequences of elements
-//
 #pragma once
+// The MIT License (MIT)
+//
+// Copyright (c) 2013-2015 Darrell Wright
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files( the "Software" ), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 #include "string.h"
 #include "exception.h"
@@ -23,7 +41,7 @@ namespace daw {
 		}
 
 		template<typename Container, typename InputIterator>
-		void safe_advance( Container& container, InputIterator& it, ptrdiff_t distance ) {			
+		void safe_advance( Container& container, InputIterator& it, ptrdiff_t distance ) {
 			if( 0 == distance ) {
 				return;
 			}
@@ -31,7 +49,7 @@ namespace daw {
 			using std::end;
 			const auto it_pos = std::distance( begin( container ), it );
 
-			if( 0 < distance ) {			
+			if( 0 < distance ) {
 				const auto size_of_container = std::distance( begin( container ), end( container ) );
 				if( size_of_container <= static_cast<ptrdiff_t>(distance + it_pos) ) {
 					distance = size_of_container - it_pos;
@@ -43,25 +61,25 @@ namespace daw {
 		}
 
 		template<typename Container>
-		auto begin_at( Container& container, size_t distance ) -> decltype( std::begin( container ) ) {			
+		auto begin_at( Container& container, size_t distance ) -> decltype(std::begin( container )) {
 			using std::begin;
 			using std::end;
 			auto result = begin( container );
-			safe_advance( container, result, static_cast<ptrdiff_t>( distance ) );
+			safe_advance( container, result, static_cast<ptrdiff_t>(distance) );
 			return result;
 		}
 
 		//////////////////////////////////////////////////////////////////////////
 		/// Summary: Run func( container, position ) on each element
 		/// in interval [first_inclusive, last_exclusive)
-		/// 
+		///
 		template<typename Container>
 		void for_each_subset( Container& container, size_t first_inclusive, size_t last_exclusive, const std::function<void( decltype(container), size_t )> func ) {
 			using std::begin;
 
 			auto it = begin_at( container, first_inclusive );
 			const auto last_it = begin_at( container, last_exclusive );
-			
+
 			auto& row = first_inclusive;
 			for( ; it != last_it; ++it ) {
 				func( container, row++ );
@@ -71,7 +89,7 @@ namespace daw {
 		//////////////////////////////////////////////////////////////////////////
 		/// Summary: Run func( container, position ) on each element
 		/// in interval [first_inclusive, last_exclusive)
-		/// 
+		///
 		template<typename Container, typename FunctionType>
 		void for_each_with_pos( Container& container, size_t first_inclusive, size_t last_exclusive, FunctionType func ) {
 			using std::begin;
@@ -88,7 +106,7 @@ namespace daw {
 
 		template<typename Container, typename FunctionType>
 		void for_each_with_pos( Container& container, const FunctionType func ) {
-			for_each_with_pos( container, 0, static_cast<size_t>(container.size( )), func);
+			for_each_with_pos( container, 0, static_cast<size_t>(container.size( )), func );
 		}
 
 		inline boost::posix_time::ptime now( ) {
@@ -168,11 +186,10 @@ namespace daw {
 
 		/// Reverser eg for( auto item: reverse( container ) ) { }
 		namespace details {
-
 			template<class Fwd>
 			struct Reverser_generic {
 				Fwd &fwd;
-				Reverser_generic( Fwd& fwd_ ): fwd( fwd_ ) { }
+				Reverser_generic( Fwd& fwd_ ) : fwd( fwd_ ) { }
 				typedef std::reverse_iterator<typename Fwd::iterator> reverse_iterator;
 				reverse_iterator begin( ) { return reverse_iterator( std::end( fwd ) ); }
 				reverse_iterator end( ) { return reverse_iterator( std::begin( fwd ) ); }
@@ -181,7 +198,7 @@ namespace daw {
 			template<class Fwd >
 			struct Reverser_special {
 				Fwd &fwd;
-				Reverser_special( Fwd& fwd_ ): fwd( fwd_ ) { }
+				Reverser_special( Fwd& fwd_ ) : fwd( fwd_ ) { }
 				auto begin( ) -> decltype(fwd.rbegin( )) { return fwd.rbegin( ); }
 				auto end( ) ->decltype(fwd.rbegin( )) { return fwd.rend( ); }
 			};
@@ -199,7 +216,7 @@ namespace daw {
 
 		template<class Fwd>
 		auto reverse( Fwd&& fwd ) -> decltype(details::reverse_impl( fwd, int( 0 ) )) {
-			static_assert(!(std::is_rvalue_reference<Fwd&&>::value),	"Cannot pass rvalue_reference to reverse()");
+			static_assert(!(std::is_rvalue_reference<Fwd&&>::value), "Cannot pass rvalue_reference to reverse()");
 			return details::reverse_impl( fwd, int( 0 ) );
 		}
 
@@ -224,7 +241,7 @@ namespace daw {
 			if( target < first ) {
 				return std::make_pair( target, std::rotate( target, first, last ) );
 			}
-			
+
 			if( last < target ) {
 				return std::make_pair( std::rotate( first, last, target ), target );
 			}
@@ -238,9 +255,7 @@ namespace daw {
 			auto finish = std::stable_partition( target, last, predicate );
 			return std::make_pair( start, finish );
 		}
-
 	}	// namespace algorithm
-
 }	// namespace daw
 
 template<typename T>

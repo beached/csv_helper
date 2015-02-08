@@ -1,3 +1,25 @@
+// The MIT License (MIT)
+//
+// Copyright (c) 2013-2015 Darrell Wright
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files( the "Software" ), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #include <algorithm>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
@@ -15,7 +37,7 @@ namespace daw {
 	namespace filesystem {
 		class MemoryMappedFileImpl {
 		private:
-//TODO remove size_t const m_max_buff_size = 1048576;
+			//TODO remove size_t const m_max_buff_size = 1048576;
 			boost::filesystem::path m_file_path;
 			boost::iostreams::mapped_file_params m_mf_params;
 			boost::iostreams::mapped_file m_mf_file;
@@ -36,15 +58,15 @@ namespace daw {
 
 			MemoryMappedFileImpl( ) = delete;
 
-			MemoryMappedFileImpl( MemoryMappedFileImpl&& other ) : 
+			MemoryMappedFileImpl( MemoryMappedFileImpl&& other ) :
 				m_file_path( std::move( other.m_file_path ) ),
-				m_mf_params( std::move( other.m_mf_params ) ), 
+				m_mf_params( std::move( other.m_mf_params ) ),
 				m_mf_file( std::move( other.m_mf_file ) ) { }
 
 			MemoryMappedFileImpl& operator=(MemoryMappedFileImpl&& rhs) {
 				if( &rhs != this ) {
 					m_file_path = std::move( rhs.m_file_path );
-					m_mf_params = std::move( rhs.m_mf_params ); 
+					m_mf_params = std::move( rhs.m_mf_params );
 					m_mf_file = std::move( rhs.m_mf_file );
 				}
 				return *this;
@@ -80,7 +102,7 @@ namespace daw {
 			}
 
 			char* data( size_t const & position = 0 ) const {
-				return m_mf_file.data( ) + static_cast<boost::iostreams::stream_offset>( position );
+				return m_mf_file.data( ) + static_cast<boost::iostreams::stream_offset>(position);
 			}
 
 			void swap( MemoryMappedFileImpl& other ) {
@@ -98,8 +120,8 @@ namespace daw {
 			lhs.swap( rhs );
 		}
 
-		// MemoryMappedFile public methods
-		MemoryMappedFile::MemoryMappedFile( const std::string &filename, const bool readonly ) :m_impl( daw::make_unique<MemoryMappedFileImpl>( filename, readonly ) ) { }
+			// MemoryMappedFile public methods
+			MemoryMappedFile::MemoryMappedFile( const std::string &filename, const bool readonly ) :m_impl( daw::make_unique<MemoryMappedFileImpl>( filename, readonly ) ) { }
 
 		MemoryMappedFile::MemoryMappedFile( MemoryMappedFile&& other ) noexcept: m_impl( std::move( other.m_impl ) ) { }
 
@@ -139,4 +161,3 @@ namespace daw {
 		}
 	}	// namespace filesystem
 }	// namespace daw
-

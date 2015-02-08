@@ -1,3 +1,4 @@
+#pragma once
 // The MIT License (MIT)
 //
 // Copyright (c) 2014-2015 Darrell Wright
@@ -20,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
 
 #include <boost/lexical_cast.hpp>
 #include <boost/spirit/include/qi_numeric.hpp>

@@ -1,3 +1,25 @@
+// The MIT License (MIT)
+//
+// Copyright (c) 2013-2015 Darrell Wright
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files( the "Software" ), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #include <algorithm>
 #include <cassert>
 #include <boost/utility/string_ref.hpp>
@@ -345,7 +367,7 @@ namespace daw {
 			return *this;
 		}
 
-		std::string const & parse_csv_data_param::file_name( ) const noexcept {
+			std::string const & parse_csv_data_param::file_name( ) const noexcept {
 			return m_file_name;
 		}
 
@@ -429,7 +451,7 @@ namespace daw {
 			return m_items.empty( );
 		}
 
-		const DataTable::value_type& DataTable::item( size_type const & column ) const {
+			const DataTable::value_type& DataTable::item( size_type const & column ) const {
 			return m_items[column];
 		}
 
@@ -457,7 +479,7 @@ namespace daw {
 
 			daw_throw_on_true( end( m_items ) == pos, "{0}: Could not find the column specified by name -> {1}", __func__, column_name );
 
-			return static_cast<size_type>( std::distance( begin( m_items ), pos ) );
+			return static_cast<size_type>(std::distance( begin( m_items ), pos ));
 		}
 
 		std::vector<DataTable::value_type>::iterator DataTable::erase( std::vector<DataTable::value_type>::iterator first ) {
@@ -549,9 +571,9 @@ namespace daw {
 			}
 
 			void erase_rows( DataTable& table, const std::function<bool( const DataTable::size_type, const DataTable& )> func ) {
-				for( ptrdiff_t n = static_cast<ptrdiff_t>( table[0].size( ) ) - 1; n >= 0; --n ) {
-					if( func( static_cast<size_t>( n ), table ) ) {
-						erase_row( table, static_cast<size_t>( n ) );
+				for( ptrdiff_t n = static_cast<ptrdiff_t>(table[0].size( )) - 1; n >= 0; --n ) {
+					if( func( static_cast<size_t>(n), table ) ) {
+						erase_row( table, static_cast<size_t>(n) );
 					}
 				}
 			}

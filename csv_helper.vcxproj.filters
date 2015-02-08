@@ -51,9 +51,6 @@
     <ClInclude Include="new_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="string.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="memorymappedfile.h">
       <Filter>Header Files</Filter>
     </ClInclude>

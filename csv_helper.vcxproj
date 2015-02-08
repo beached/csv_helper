@@ -30,7 +30,6 @@
     <ClInclude Include="defs.h" />
     <ClInclude Include="memorymappedfile.h" />
     <ClInclude Include="new_helper.h" />
-    <ClInclude Include="string.h" />
     <ClInclude Include="string_helpers.h" />
     <ClInclude Include="variant.h" />
   </ItemGroup>

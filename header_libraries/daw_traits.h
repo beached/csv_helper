@@ -1,3 +1,4 @@
+#pragma once
 // The MIT License (MIT)
 //
 // Copyright (c) 2014-2015 Darrell Wright
@@ -19,8 +20,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-
-#pragma once
 
 #include <boost/type_traits.hpp>
 #include <type_traits>
@@ -173,7 +172,7 @@ namespace daw {
 		class has_##MemberName##_member_impl< T, typename std::enable_if<std::is_class<T>::value>::type> { \
 					struct Fallback { \
 						int MemberName; \
-																																																																																																																																																																																																																																																																																																																																																																																																																																																													}; \
+																																																																																																																																																																																																																																																																																																																																																																																																																																																															}; \
 					struct Derived : T, Fallback { }; \
 					\
 					template<typename U, U> struct Check; \
@@ -186,8 +185,8 @@ namespace daw {
 				  public: \
 					typedef has_##MemberName##_member_impl type; \
 					enum { value = sizeof(func<Derived>(0)) == 2 }; \
-																																																																																																																																																																																																																																																																												}; /*struct has_##MemberName##_member_impl*/ \
-																																																																																																																																																																																																																																																																											} /* namespace impl */ \
+																																																																																																																																																																																																																																																																														}; /*struct has_##MemberName##_member_impl*/ \
+																																																																																																																																																																																																																																																																													} /* namespace impl */ \
 			template<typename T> using has_##MemberName##_member = std::integral_constant<bool, impl::has_##MemberName##_member_impl<T>::value>; \
 			template<typename T> using has_##MemberName##_member_t = typename has_##MemberName##_member<T>::type;
 
@@ -292,8 +291,8 @@ namespace daw {
 				template<typename = void, typename...> static Two _test( ... ); \
 			public: \
 				enum { value = sizeof( function_title##_exists_impl<Result, Arguments...>::_test<Result, Arguments...>( 0 ) ) == 1 }; \
-				}; \
-			} \
+						}; \
+					} \
 		template<typename Result, typename... Arguments> \
 		using function_name##_exists = std::integral_constant<bool, impl::function_title##_exists_impl<Result, Arguments...>::value >; \
 		template<typename Result, typename... Arguments> \

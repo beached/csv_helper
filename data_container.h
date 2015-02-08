@@ -1,4 +1,25 @@
 #pragma once
+// The MIT License (MIT)
+//
+// Copyright (c) 2013-2015 Darrell Wright
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files( the "Software" ), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 #include "stdafx.h"
 #include <iterator>
@@ -7,7 +28,6 @@
 
 namespace daw {
 	namespace collections {
-
 		template<typename T, typename U>
 		class DataContainer {
 		public:
@@ -16,7 +36,7 @@ namespace daw {
 			using reference = value_type&;
 			using const_reference = const value_type&;
 			using values_type = U;
-			
+
 			using iterator = typename values_type::iterator;
 			using const_iterator = typename values_type::const_iterator;
 			using reverse_iterator = typename values_type::reverse_iterator;
@@ -48,13 +68,11 @@ namespace daw {
 			virtual const_reference operator[]( const size_type pos ) const {
 				return item( pos );
 			}
-
 		};
 
 
-// 		template<typename T, typename U>
-// 		class DataColumn
-
+		// 		template<typename T, typename U>
+		// 		class DataColumn
 	}	// namespace collections
 	namespace data {
 		class DataCell;
@@ -67,17 +85,17 @@ namespace daw {
 
 	namespace collections {
 		template<>
-		class DataContainer<daw::data::DataCell, ::std::map<size_t, daw::data::DataCell>> {
+		class DataContainer < daw::data::DataCell, ::std::map<size_t, daw::data::DataCell> > {
 		public:
 			using value_type = daw::data::DataCell;
 			using reference = daw::data::DataCell&;
 			using const_reference = const daw::data::DataCell&;
-			using values_type = ::std::map<size_t, daw::data::DataCell>;
+			using values_type = ::std::map < size_t, daw::data::DataCell > ;
 
-			using iterator = daw::data::impl::DataColumnSparseIterator<daw::data::DataColumnSparse>;
-			using const_iterator = daw::data::impl::DataColumnSparseIterator<daw::data::DataColumnSparse const>;
-			using reverse_iterator = daw::data::impl::DataColumnSparseReverseIterator<daw::data::DataColumnSparse>;
-			using const_reverse_iterator = daw::data::impl::DataColumnSparseReverseIterator<daw::data::DataColumnSparse const>;
+			using iterator = daw::data::impl::DataColumnSparseIterator < daw::data::DataColumnSparse > ;
+			using const_iterator = daw::data::impl::DataColumnSparseIterator < daw::data::DataColumnSparse const > ;
+			using reverse_iterator = daw::data::impl::DataColumnSparseReverseIterator < daw::data::DataColumnSparse > ;
+			using const_reverse_iterator = daw::data::impl::DataColumnSparseReverseIterator < daw::data::DataColumnSparse const > ;
 			using difference_type = values_type::difference_type;
 			using size_type = values_type::size_type;
 
@@ -111,8 +129,6 @@ namespace daw {
 
 			virtual void append( const_reference ) = 0;
 			virtual void append( value_type&& ) = 0;
-
 		};
-
 	}	// namespace collections
 }	// namespace daw
