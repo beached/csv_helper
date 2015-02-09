@@ -10,10 +10,14 @@ set( THIRD_PARTY_FILES "${CMAKE_CURRENT_SOURCE_DIR}/third_party" )
 set(CLANG_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -O3 -Weverything -Wno-c++98-compat  -Wfatal-errors -Wno-covered-switch-default -Wno-padded -Wno-exit-time-destructors -Wno-c++98-compat-pedantic -Wno-unused-parameter -Wno-missing-noreturn -Wno-missing-prototypes")
 set(GCC_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -O3 -Wall" )
 
-if(CMAKE_CXX_COMPILER_ID EQUAL "Clang")
-	set( CMAKE_CXX_FLAGS "${CLANG_CMAKE_CXX_FLAGS}" )
-elseif(CMAKE_CXX_COMPILER_ID EQUAL "GNU")
-	set( CMAKE_CXX_FLAGS "${GCC_CMAKE_CXX_FLAGS}" )
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    message( STATUS "Using Clang" )
+    set( CMAKE_CXX_FLAGS "${CLANG_CMAKE_CXX_FLAGS}" )
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    message( STATUS "Using GNU" )
+    set( CMAKE_CXX_FLAGS "${GCC_CMAKE_CXX_FLAGS}" )
+else( )
+    message( STATUS "Using Other Compiler -> ${CMAKE_CXX_COMPILER_ID}" )
 endif( )
 
 ExternalProject_Add( header_libraries
@@ -48,4 +52,5 @@ include_directories( "${CMAKE_CURRENT_SOURCE_DIR}" "${THIRD_PARTY_FILES}/header_
 
 add_library (csv_helper STATIC ${SOURCE_FILES} )
 add_dependencies( csv_helper header_libraries )
+
 
