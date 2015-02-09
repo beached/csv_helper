@@ -11,9 +11,9 @@ set(CLANG_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -O3 -Weverything -Wn
 set(GCC_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -O3 -Wall" )
 
 if(CMAKE_CXX_COMPILER_ID EQUAL "Clang")
-	set( CMAKE_CXX_FLAGS "{$CLANG_CMAKE_CXX_FLAGS}" )
+	set( CMAKE_CXX_FLAGS "${CLANG_CMAKE_CXX_FLAGS}" )
 elseif(CMAKE_CXX_COMPILER_ID EQUAL "GNU")
-	set( CMAKE_CXX_FLAGS "{$GCC_CMAKE_CXX_FLAGS}" )
+	set( CMAKE_CXX_FLAGS "${GCC_CMAKE_CXX_FLAGS}" )
 endif( )
 
 ExternalProject_Add( header_libraries
