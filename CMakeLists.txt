@@ -48,7 +48,7 @@ set(SOURCE_FILES
 )
 
 
-include_directories( "${CMAKE_CURRENT_SOURCE_DIR}" "${THIRD_PARTY_FILES}/header_libraries" )
+include_directories( "${CMAKE_CURRENT_SOURCE_DIR}" "${THIRD_PARTY_FILES}" )
 
 add_library (csv_helper STATIC ${SOURCE_FILES} )
 add_dependencies( csv_helper header_libraries )
