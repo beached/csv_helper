@@ -52,7 +52,7 @@ include_directories( "${CMAKE_CURRENT_SOURCE_DIR}" "${THIRD_PARTY_FILES}" )
 
 #3add_library (csv_helper STATIC ${SOURCE_FILES} )
 add_library (csv_helper SHARED ${SOURCE_FILES} )
-add_library (csv_helper STATIC ${SOURCE_FILES} )
+add_library (csv_helper_static STATIC ${SOURCE_FILES} )
 add_dependencies( csv_helper header_libraries )
 
 
