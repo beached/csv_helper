@@ -82,9 +82,9 @@ namespace daw {
 
 		variant_union_t::variant_union_t( ) noexcept: m_string( nullptr ) { }
 
-		variant_union_t::variant_union_t( const variant_union_t& value ) : m_string( create_copy( value.m_string, std::numeric_limits<size_t>::max( ) ) ) { }
+		variant_union_t::variant_union_t( variant_union_t const& value ) : m_string( create_copy( value.m_string, std::numeric_limits<size_t>::max( ) ) ) { }
 
-		variant_union_t& variant_union_t::operator=(const variant_union_t& value) {
+		variant_union_t& variant_union_t::operator=(variant_union_t const& value) {
 			if( this != &value ) {
 				m_string = create_copy( value.m_string, std::numeric_limits<size_t>::max( ) );
 			}
@@ -103,27 +103,40 @@ namespace daw {
 			return *this;
 		}
 
-			variant_union_t::variant_union_t( integer_t value ) noexcept : m_integer( std::move( value ) ) { }
+		variant_union_t::variant_union_t( integer_t value ) noexcept : m_integer( std::move( value ) ) { }
 		variant_union_t::variant_union_t( real_t value ) noexcept: m_real( std::move( value ) ) { }
 		variant_union_t::variant_union_t( uint32_t value ) noexcept: m_timestamp( std::move( value ) ) { }
 		variant_union_t::variant_union_t( cstring value ) noexcept: m_string( value.move( ) ) { }
 
 		Variant::Variant( ) noexcept: m_type( DataCellType::empty_string ), m_value( ) { };
 
-		Variant::Variant( Variant&& value ) noexcept: m_type( std::move( value.m_type ) ), m_value( std::move( value.m_value ) ) {
+		Variant::Variant( Variant Variant&& value ) noexcept: m_type( std::move( value.m_type ) ), m_value( std::move( value.m_value ) ) {
 			if( DataCellType::string == m_type ) {
 				value.m_value.m_string = nullptr;
 				value.m_type = DataCellType::empty_string;
 			}
 		}
 
-		Variant& Variant::operator=(Variant value) noexcept {
+		Variant Variant& Variant::operator=(Variant const & value) {
+			if( this != value ) {
+				m_type = value.m_type;
+				switch( m_type ) {
+					DataCellType::string:
+						
+					
+				}
+				m_value = std::move( value.m_value );
+			}
+			return *this;
+		}
+
+		Variant Variant& Variant::operator=(Variant value) noexcept {
 			m_type = std::move( value.m_type );
 			m_value = std::move( value.m_value );
 			return *this;
 		}
 
-			Variant::~Variant( ) noexcept {
+		Variant::~Variant( ) noexcept {
 			if( DataCellType::string == m_type && nullptr != m_value.m_string ) {
 				try {
 					auto tmp = const_cast<char*>(m_value.m_string);
@@ -208,7 +221,7 @@ namespace daw {
 			}
 		}	// namespace impl
 
-		int Variant::compare( const Variant& lhs, const Variant& rhs ) {
+		int Variant::compare( const Variant Variant& lhs, const Variant Variant& rhs ) {
 			dbg_throw_on_false( lhs.type( ) == rhs.type( ), "{0}: Can only compare like Variant types", __func__ );
 			switch( lhs.type( ) ) {
 			case DataCellType::empty_string:
@@ -226,27 +239,27 @@ namespace daw {
 			}
 		}
 
-		bool Variant::operator==(const Variant& rhs) const {
+		bool Variant::operator==(const Variant Variant& rhs) const {
 			return compare( *this, rhs ) == 0;
 		}
 
-		bool Variant::operator!=(const Variant& rhs) const {
+		bool Variant::operator!=(const Variant Variant& rhs) const {
 			return compare( *this, rhs ) != 0;
 		}
 
-		bool Variant::operator<(const Variant& rhs) const {
+		bool Variant::operator<(const Variant Variant& rhs) const {
 			return compare( *this, rhs ) < 0;
 		}
 
-		bool Variant::operator>(const Variant& rhs) const {
+		bool Variant::operator>(const Variant Variant& rhs) const {
 			return compare( *this, rhs ) > 0;
 		}
 
-		bool Variant::operator<=(const Variant& rhs) const {
+		bool Variant::operator<=(const Variant Variant& rhs) const {
 			return compare( *this, rhs ) <= 0;
 		}
 
-		bool Variant::operator>=(const Variant& rhs) const {
+		bool Variant::operator>=(const Variant Variant& rhs) const {
 			return compare( *this, rhs ) >= 0;
 		}
 	}	// namespace data
