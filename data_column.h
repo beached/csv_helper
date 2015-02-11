@@ -68,19 +68,36 @@ namespace daw {
 
 		public:
 			DataColumn( const std::string& header = "" ) noexcept : m_items( ), m_header( header ), m_hidden( false ) { }
-			DataColumn( const DataColumn& ) = default;
 			~DataColumn( ) = default;
-			DataColumn( DataColumn&& other ) noexcept: m_items( std::move( other.m_items ) ), m_header( std::move( other.m_header ) ), m_hidden( std::move( other.m_hidden ) ) { }
-			bool operator==(const DataColumn&) const = delete;
 
-			DataColumn& operator=(DataColumn rhs) noexcept {
-				m_items = std::move( rhs.m_items );
-				m_header = std::move( rhs.m_header );
-				m_hidden = std::move( rhs.m_hidden );
+
+			bool operator==(DataColumn const &) const = delete;
+
+			DataColumn( DataColumn const & ) = default;
+			DataColumn& operator=(DataColumn const & rhs) = default;
+
+			DataColumn( DataColumn&& other ) noexcept: 
+				m_items( std::move( other.m_items ) ), 
+				m_header( std::move( other.m_header ) ), 
+				m_hidden( std::move( other.m_hidden ) ) { }
+
+			DataColumn& operator=(DataColumn && rhs) noexcept {
+				if( this != &rhs ) {
+					m_items = std::move( rhs.m_items );
+					m_header = std::move( rhs.m_header );
+					m_hidden = std::move( rhs.m_hidden );
+				}
 				return *this;
 			}
+	
+			void swap( DataColumn & rhs ) noexcept {
+				using std::swap;
+				swap( m_items, rhs.m_items );
+				swap( m_header, rhs.m_header );
+				swap( m_hidden, rhs.m_hidden );
+			}
 
-				void shrink_to_fit( ) {
+			void shrink_to_fit( ) {
 				shrink_to_fit( m_items );
 			}
 
@@ -191,6 +208,11 @@ namespace daw {
 				m_items.clear( );
 			}
 		};	// DataColumn
+
+		template<typename StorageType>
+		void swap( DataColumn<StorageType> & lhs,  DataColumn<StorageType> & rhs ) {
+			lhs.swap( rhs );
+		}
 
 		void convert_column_to_timestamp( DataColumn<std::vector<DataCell>> & column, boost::string_ref format = "%d/%m/%y %H:%M:%S", bool is_nullable = true );
 	}	// namespace data

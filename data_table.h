@@ -65,6 +65,7 @@ namespace daw {
 
 			DataTable& operator=(DataTable const & rhs);
 			DataTable& operator=(DataTable && rhs) noexcept;
+			void swap( DataTable & rhs ) noexcept;
 
 			~DataTable( ) = default;
 			bool operator==(const DataTable& rhs) const = delete;
@@ -113,6 +114,7 @@ namespace daw {
 			values_type m_items;
 		};
 		//TODO static_assert(daw::traits::is_regular<DataTable>::value, "DataTable isn't regular");
+		void swap( DataTable & lhs, DataTable & rhs ) noexcept;
 
 		struct parse_csv_data_param {
 		private:

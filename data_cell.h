@@ -44,7 +44,8 @@ namespace daw {
 			DataCell( const DataCell& value ) = default;
 
 			DataCell( DataCell&& value ) noexcept;
-			DataCell& operator=(DataCell value) noexcept;
+			DataCell& operator=(DataCell && value) noexcept;
+			DataCell& operator=(DataCell const & value);
 			~DataCell( ) = default;
 
 			explicit DataCell( cstring value );
@@ -83,10 +84,13 @@ namespace daw {
 
 			// Data
 			static const DataCell s_empty_cell;
+			void swap( DataCell & rhs ) noexcept;
 		private:
 			Variant m_item;
 		};
 		static_assert(daw::traits::is_regular<DataCell>::value, "DataCell isn't regular");
+		
+		void swap( DataCell & lhs, DataCell & rhs ) noexcept;
 
 		bool is_numeric( daw::data::DataCellType const & ct );
 		bool is_numeric( daw::data::DataCell const & value );

@@ -424,13 +424,17 @@ namespace daw {
 			return *this;
 		}
 
-			DataTable& DataTable::operator=(DataTable const & rhs) {
+		DataTable& DataTable::operator=(DataTable const & rhs) {
 			if( this != &rhs ) {
 				m_items = rhs.m_items;
 			}
 			return *this;
 		}
 
+		void DataTable::swap( DataTable & rhs ) noexcept {
+			using std::swap;
+			swap( m_items, rhs.m_items );
+		}
 
 		DataTable::DataTable( std::vector<DataTable::value_type> columns ) : m_items( std::move( columns ) ) { }
 
@@ -565,6 +569,10 @@ namespace daw {
 			m_items.clear( );
 		}
 		// End DataTable
+
+		void swap( DataTable & lhs, DataTable & rhs ) noexcept {
+			lhs.swap( rhs );
+		}
 
 		namespace algorithm {
 			void erase_row( DataTable& table, const DataTable::size_type row ) {

@@ -111,12 +111,26 @@ namespace daw {
 
 		DataCell::DataCell( DataCell&& value ) noexcept: m_item( std::move( value.m_item ) ) { }
 
-		DataCell& DataCell::operator=(DataCell rhs) noexcept {
-			m_item = std::move( rhs.m_item );
+		DataCell& DataCell::operator=(DataCell && rhs) noexcept {
+			if( this != &rhs ) {
+				m_item = std::move( rhs.m_item );
+			}
 			return *this;
 		}
 
-			DataCell::DataCell( cstring value ) : m_item( std::move( value ) ) { }
+		DataCell& DataCell::operator=(DataCell const & rhs) {
+			if( this != &rhs ) {
+				m_item = rhs.m_item;
+			}
+			return *this;
+		}
+
+		void DataCell::swap( DataCell & rhs ) noexcept {
+			using std::swap;
+			swap( m_item, rhs.m_item );
+		}
+
+		DataCell::DataCell( cstring value ) : m_item( std::move( value ) ) { }
 		DataCell::DataCell( integer_t value ) : m_item( std::move( value ) ) { }
 		DataCell::DataCell( real_t value ) : m_item( std::move( value ) ) { }
 		DataCell::DataCell( timestamp_t value ) : m_item( std::move( value ) ) { }
@@ -125,7 +139,7 @@ namespace daw {
 			return !empty( );
 		}
 
-			std::string DataCell::to_string( std::string locale_str ) const {
+		std::string DataCell::to_string( std::string locale_str ) const {
 			using daw::string::convertToString;
 			std::string result;
 			switch( type( ) ) {
@@ -305,5 +319,10 @@ namespace daw {
 			const auto ct = value.type( );
 			return is_numeric( ct );
 		}
+
+		void swap( DataCell & lhs, DataCell & rhs ) noexcept {
+			lhs.swap( rhs );
+		}
+
 	}	  // Namespace data
 }	// namespace daw
