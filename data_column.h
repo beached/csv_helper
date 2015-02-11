@@ -21,10 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "data_types.h"
-#include "data_cell.h"
 #include <functional>
 #include <string>
+#include <vector>
+
+#include "data_cell.h"
+#include "data_types.h"
 #include"header_libraries/workarounds.h"
 
 #if USE_PPL == 1
@@ -188,6 +190,8 @@ namespace daw {
 				void clear( ) {
 				m_items.clear( );
 			}
-		};
+		};	// DataColumn
+
+		void convert_column_to_timestamp( DataColumn<std::vector<DataCell>> & column, boost::string_ref format = "%d/%m/%y %H:%M:%S", bool is_nullable = true );
 	}	// namespace data
 }	// namespace daw

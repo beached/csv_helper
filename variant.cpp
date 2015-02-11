@@ -108,10 +108,20 @@ namespace daw {
 			return *this;
 		}
 
-			variant_union_t::variant_union_t( integer_t value ) noexcept : m_integer( std::move( value ) ) { }
+		void variant_union_t::swap( variant_union_t & rhs ) noexcept {
+			using std::swap;
+			swap( m_string, rhs.m_string );
+		}
+
+		variant_union_t::variant_union_t( integer_t value ) noexcept : m_integer( std::move( value ) ) { }
 		variant_union_t::variant_union_t( real_t value ) noexcept: m_real( std::move( value ) ) { }
 		variant_union_t::variant_union_t( uint32_t value ) noexcept: m_timestamp( std::move( value ) ) { }
 		variant_union_t::variant_union_t( cstring value ) noexcept: m_string( value.move( ) ) { }
+
+			
+		void swap( variant_union_t & lhs, variant_union_t & rhs ) noexcept {
+			lhs.swap( rhs );
+		}
 
 		Variant::Variant( ): m_type( DataCellType::empty_string ), m_value( ) { };
 
@@ -147,8 +157,14 @@ namespace daw {
 			m_value = std::move( value.m_value );
 			return *this;
 		}
+	
+		void Variant::swap( Variant & rhs ) noexcept {
+			using std::swap;
+			swap( m_type, rhs.m_type );
+			swap( m_value, rhs.m_value );
+		}
 
-			Variant::~Variant( ) noexcept {
+		Variant::~Variant( ) noexcept {
 			if( DataCellType::string == m_type && nullptr != m_value.m_string ) {
 				try {
 					auto tmp = const_cast<char*>(m_value.m_string);
@@ -160,11 +176,11 @@ namespace daw {
 			}
 		}
 
-			Variant::Variant( integer_t value ) noexcept:m_type( DataCellType::integer ), m_value( std::move( value ) ) { }
+		Variant::Variant( integer_t value ):m_type( DataCellType::integer ), m_value( std::move( value ) ) { }
 
-		Variant::Variant( real_t value ) noexcept: m_type( DataCellType::real ), m_value( std::move( value ) ) { }
+		Variant::Variant( real_t value ): m_type( DataCellType::real ), m_value( std::move( value ) ) { }
 
-		Variant::Variant( timestamp_t value ) noexcept: m_type( DataCellType::timestamp ), m_value( ptime_to_uint32( value ) ) { }
+		Variant::Variant( timestamp_t value ): m_type( DataCellType::timestamp ), m_value( ptime_to_uint32( value ) ) { }
 
 		namespace {
 			cstring copy_when_needed( cstring value ) {
@@ -273,6 +289,10 @@ namespace daw {
 
 		bool Variant::operator>=(const Variant & rhs) const {
 			return compare( *this, rhs ) >= 0;
+		}
+
+		void swap( Variant & lhs, Variant & rhs ) noexcept {
+			lhs.swap( rhs );
 		}
 	}	// namespace data
 }	// namespace daw

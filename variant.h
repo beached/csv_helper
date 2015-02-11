@@ -54,7 +54,11 @@ namespace daw {
 			explicit variant_union_t( real_t value ) noexcept;
 			explicit variant_union_t( uint32_t value ) noexcept;
 			explicit variant_union_t( cstring value ) noexcept;
+
+			void swap( variant_union_t & rhs ) noexcept;
 		};
+		
+		void swap( variant_union_t & lhs, variant_union_t & rhs ) noexcept;
 
 
 		class Variant {
@@ -72,8 +76,6 @@ namespace daw {
 			explicit Variant( real_t value );
 			explicit Variant( timestamp_t value );
 			explicit Variant( cstring value );
-
-			//void swap( Variant& rhs );
 
 			bool empty( ) const noexcept;
 			DataCellType type( ) const noexcept;
@@ -93,7 +95,8 @@ namespace daw {
 			bool operator>(Variant const & rhs) const;
 			bool operator<=(Variant const & rhs) const;
 			bool operator>=(Variant const & rhs) const;
-
+			
+			void swap( Variant & rhs ) noexcept;
 		private:
 			DataCellType m_type;
 			variant_union_t m_value;
@@ -101,5 +104,7 @@ namespace daw {
 #if PACK_VARIANT == 1
 #pragma pack( )
 #endif
+		
+	void swap( Variant & lhs, Variant & rhs ) noexcept;
 	}	// namespace data
 }	// namespace daw
