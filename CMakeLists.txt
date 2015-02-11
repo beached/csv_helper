@@ -34,6 +34,7 @@ set(SOURCE_FILES
 		data_cell.cpp
 		data_cell.h
 		data_column.h
+		data_column.cpp
 		data_common.h
 		data_container.h
 		data_table.cpp

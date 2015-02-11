@@ -7,7 +7,7 @@
 namespace daw {
 	namespace data {
 		void convert_column_to_timestamp( DataColumn<std::vector<DataCell>> & column, bool is_nullable, boost::string_ref format ) {
-			std::transform( column.begin( ), column.end( ), column.begin( ), [format]( DataCell const & cell ) {
+			std::transform( column.begin( ), column.end( ), column.begin( ), [format, is_nullable]( DataCell const & cell ) -> daw::data::DataCell {
 				if( cell.empty( ) && is_nullable ) {
 					return cell;
 				}
