@@ -339,7 +339,7 @@ namespace daw {
 						for( auto& column : result_datatable ) {
 							const auto num_to_add = column_size - column.size( );
 							if( 0 < num_to_add ) {
-								std::cerr << "Error parsing table: A column was missing " << num_to_add << " columns\n";
+								std::cerr << "Warning: While parsing table a column was missing " << num_to_add << " row(s)\n";
 							}
 							for( DataTable::size_type n = 0; n < num_to_add; ++n ) {
 								column.append( DataTable::cell_type( ) );
