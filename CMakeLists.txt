@@ -25,6 +25,7 @@ ExternalProject_Add( header_libraries
     GIT_REPOSITORY https://github.com/beached/header_libraries#
 	SOURCE_DIR "${THIRD_PARTY_FILES}/header_libraries"
     INSTALL_COMMAND ""
+    UPDATE_COMMAND ""
 )
 
 set(SOURCE_FILES

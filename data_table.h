@@ -112,7 +112,7 @@ namespace daw {
 		private:
 			std::string m_file_name;
 			DataTable::size_type m_header_row;
-			std::function<bool( std::string const& )> m_column_filter;
+			std::function<bool( std::string const & )> m_column_filter;
 			std::function<void( std::string )> m_progress_cb;
 		public:
 			parse_csv_data_param( ) = delete;
@@ -122,7 +122,7 @@ namespace daw {
 			parse_csv_data_param& operator=(parse_csv_data_param param) noexcept;
 
 			bool operator==(const parse_csv_data_param& rhs) const = delete;
-			std::string const& file_name( ) const noexcept;
+			std::string const & file_name( ) const noexcept;
 			const DataTable::size_type& header_row( ) const noexcept;
 			const std::function<bool( std::string const & )>& column_filter( ) const noexcept;
 			const std::function<void( std::string )>& progress_cb( ) const noexcept;

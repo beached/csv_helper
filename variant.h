@@ -41,11 +41,11 @@ namespace daw {
 			integer_t m_integer;
 			real_t m_real;
 			uint32_t m_timestamp;
-			char* m_string;
+			char const * m_string;
 
 			explicit variant_union_t( ) noexcept;
-			explicit variant_union_t( variant_union_t const& value );
-			variant_union_t& operator=(variant_union_t const& value);
+			explicit variant_union_t( variant_union_t const & value );
+			variant_union_t& operator=(variant_union_t const & value);
 			explicit variant_union_t( variant_union_t&& value ) noexcept;
 			variant_union_t& operator=(variant_union_t&& value) noexcept;
 			~variant_union_t( ) = default;
@@ -60,11 +60,11 @@ namespace daw {
 		class Variant {
 		public:
 			Variant( ) noexcept;
-			Variant& operator=(Variant const & rhs) noexcept;
+			Variant& operator=(Variant const & rhs);
 			Variant& operator=(Variant && rhs) noexcept;
 			Variant( Variant&& value ) noexcept;
 			~Variant( ) noexcept;
-			Variant( Variant const& ) = default;
+			Variant( Variant const & );
 
 			explicit Variant( integer_t value ) noexcept;
 			explicit Variant( real_t value ) noexcept;
@@ -82,15 +82,15 @@ namespace daw {
 
 			std::string string( std::string locale = "" ) const;
 
-			static int compare( Variant const & lhs, Variant const& rhs );
+			static int compare( Variant const & lhs, Variant const & rhs );
 
-			bool operator==(Variant const& rhs) const;
-			bool operator!=(Variant const& rhs) const;
+			bool operator==(Variant const & rhs) const;
+			bool operator!=(Variant const & rhs) const;
 
-			bool operator<(Variant const& rhs) const;
-			bool operator>(Variant const& rhs) const;
-			bool operator<=(Variant const& rhs) const;
-			bool operator>=(Variant const& rhs) const;
+			bool operator<(Variant const & rhs) const;
+			bool operator>(Variant const & rhs) const;
+			bool operator<=(Variant const & rhs) const;
+			bool operator>=(Variant const & rhs) const;
 
 		private:
 			DataCellType m_type;
