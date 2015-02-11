@@ -214,6 +214,6 @@ namespace daw {
 			lhs.swap( rhs );
 		}
 
-		void convert_column_to_timestamp( DataColumn<std::vector<DataCell>> & column, boost::string_ref format = "%d/%m/%y %H:%M:%S", bool is_nullable = true );
+		void convert_column_to_timestamp( DataColumn<std::vector<DataCell>> & column, bool is_nullable = true, boost::string_ref format = "%d/%m/%y %H:%M:%S" );
 	}	// namespace data
 }	// namespace daw
