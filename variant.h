@@ -59,17 +59,19 @@ namespace daw {
 
 		class Variant {
 		public:
-			Variant( ) noexcept;
-			Variant& operator=(Variant const & rhs);
-			Variant& operator=(Variant && rhs) noexcept;
-			Variant( Variant&& value ) noexcept;
-			~Variant( ) noexcept;
-			Variant( Variant const & );
+			Variant( );
 
-			explicit Variant( integer_t value ) noexcept;
-			explicit Variant( real_t value ) noexcept;
-			explicit Variant( timestamp_t value ) noexcept;
-			explicit Variant( cstring value ) noexcept;
+			Variant( Variant const & other );
+			Variant& operator=(Variant const & rhs);
+
+			Variant( Variant&& value ) noexcept;
+			Variant& operator=(Variant && rhs) noexcept;
+			~Variant( ) noexcept;
+
+			explicit Variant( integer_t value );
+			explicit Variant( real_t value );
+			explicit Variant( timestamp_t value );
+			explicit Variant( cstring value );
 
 			//void swap( Variant& rhs );
 

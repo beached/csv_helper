@@ -25,6 +25,7 @@
 #include "header_libraries/exception.h"
 #include "header_libraries/daw_string.h"
 #include "new_helper.h"
+#include "header_libraries/workarounds.h"
 
 using daw::string::string_join;
 using namespace daw::exception;
@@ -48,14 +49,13 @@ namespace daw {
 				return result;
 			}
 
-
 			boost::posix_time::ptime get_epoch( ) {
 				static auto const s_epoch = boost::posix_time::time_from_string( "1970-01-01 00:00:00.000" );
 				return s_epoch;
 			}
 
 			/// <summary>We expect to own the string</summary>
-			const char* copy_string( const char* value ) noexcept {
+			char const * copy_string( char const * value ) {
 				if( nullptr == value ) {
 					return value;
 				}
@@ -70,11 +70,11 @@ namespace daw {
 				return result;
 			}
 
-				cstring copy_string( cstring value ) noexcept {
+			cstring copy_string( cstring value ) {
 				return std::move( value );
 			}
 
-				uint32_t ptime_to_uint32( boost::posix_time::ptime value ) noexcept {
+			uint32_t ptime_to_uint32( boost::posix_time::ptime value ) noexcept {
 				const auto diff = value - get_epoch( );
 				assert( 0 <= diff.total_seconds( ) );
 				return static_cast<uint32_t>(diff.total_seconds( ));
@@ -85,7 +85,7 @@ namespace daw {
 			}
 		}
 
-		variant_union_t::variant_union_t( ) noexcept: m_string( nullptr ) { }
+		variant_union_t::variant_union_t( ) noexcept : m_string( nullptr ) { }
 
 		variant_union_t::variant_union_t( variant_union_t const & value ) : m_string( create_copy( value.m_string, std::numeric_limits<size_t>::max( ) ) ) { }
 
@@ -113,7 +113,7 @@ namespace daw {
 		variant_union_t::variant_union_t( uint32_t value ) noexcept: m_timestamp( std::move( value ) ) { }
 		variant_union_t::variant_union_t( cstring value ) noexcept: m_string( value.move( ) ) { }
 
-		Variant::Variant( ) noexcept: m_type( DataCellType::empty_string ), m_value( ) { };
+		Variant::Variant( ): m_type( DataCellType::empty_string ), m_value( ) { };
 
 		Variant::Variant( Variant && value ) noexcept: m_type( std::move( value.m_type ) ), m_value( std::move( value.m_value ) ) {
 			if( DataCellType::string == m_type ) {
@@ -125,22 +125,18 @@ namespace daw {
 		Variant & Variant::operator=(Variant const & value) {
 			if( this != &value ) {
 				m_type = value.m_type;
-				switch( m_type ) {
-				case DataCellType::string:
-					m_value = value.m_value;
-					break;
-				default:
+				if( m_type == DataCellType::string ) {
+					m_value.m_string = copy_string( value.m_value.m_string );
+				} else {
 					m_value.m_string = value.m_value.m_string;
-					break;
 				}
-				m_value = std::move( value.m_value );
 			}
 			return *this;
 		}
 
 		Variant::Variant( Variant const & value ) : m_type( value.m_type ) {
 			if( m_type == DataCellType::string ) {
-				m_value.m_string = create_copy( value.m_value.m_string, 0 );
+				m_value.m_string = copy_string( value.m_value.m_string );
 			} else {
 				m_value.m_string = value.m_value.m_string;
 			}
@@ -175,12 +171,12 @@ namespace daw {
 				if( !value.is_local_string( ) ) {
 					return cstring( value.get( ), true, value.size( ) );
 				} else {
-					return std::move( value );
+					return value;
 				}
 			}
 		}
 
-		Variant::Variant( cstring value ) noexcept : m_type( value.is_null( ) ? DataCellType::empty_string : DataCellType::string ), m_value( copy_when_needed( std::move( value ) ) ) { };
+		Variant::Variant( cstring value ) : m_type( value.is_null( ) ? DataCellType::empty_string : DataCellType::string ), m_value( copy_when_needed( std::move( value ) ) ) { };
 
 		const integer_t& Variant::integer( ) const {
 			dbg_throw_on_false( DataCellType::integer == m_type, "{0}: Attempt to extract an integer from a non-integer", __func__ );
