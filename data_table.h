@@ -21,22 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "data_types.h"
-#include "data_column.h"
-#include "data_cell.h"
-#if defined( USE_SPARSE_VECTOR ) && USE_SPARSE_VECTOR == 1
-#include "sparse_vector.h"
-#endif
-#include "header_libraries/expected.h"
 #include <boost/utility/string_ref.hpp>
 #include <functional>
+#include <list>
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <list>
+
 #include "defs.h"
-#include "header_libraries/workarounds.h"
+#if defined( USE_SPARSE_VECTOR ) && USE_SPARSE_VECTOR == 1
+#include "sparse_vector.h"
+#endif
+
+#include "data_cell.h"
+#include "data_column.h"
+#include "data_types.h"
 #include "header_libraries/daw_traits.h"
+#include "header_libraries/expected.h"
+#include "header_libraries/workarounds.h"
 
 namespace daw {
 	namespace data {
@@ -57,9 +59,13 @@ namespace daw {
 
 			DataTable( ) = default;
 			DataTable( std::vector<value_type> columns );
-			DataTable( const DataTable& other );
+
+			DataTable( DataTable const & other );
 			DataTable( DataTable&& value ) noexcept;
-			DataTable& operator=(DataTable rhs) noexcept;
+
+			DataTable& operator=(DataTable const & rhs);
+			DataTable& operator=(DataTable && rhs) noexcept;
+
 			~DataTable( ) = default;
 			bool operator==(const DataTable& rhs) const = delete;
 

@@ -21,22 +21,8 @@
 // SOFTWARE.
 
 #include <algorithm>
-#include <cassert>
 #include <boost/utility/string_ref.hpp>
-#include "header_libraries/algorithm.h"
-#include "cstring.h"
-#include "data_algorithms.h"
-#include "data_cell.h"
-#include "data_column.h"
-#include "data_table.h"
-#include "string_helpers.h"
-#include "header_libraries/exception.h"
-#include "header_libraries/expected.h"
-#include "header_libraries/make_unique.h"
-#include "new_helper.h"
-#include "header_libraries/daw_string.h"
-#include "header_libraries/workarounds.h"
-#include "memorymappedfile.h"
+#include <cassert>
 #include <fstream>
 #include <functional>
 #include <functional>
@@ -44,6 +30,21 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+
+#include "cstring.h"
+#include "data_algorithms.h"
+#include "data_cell.h"
+#include "data_column.h"
+#include "data_table.h"
+#include "header_libraries/algorithm.h"
+#include "header_libraries/daw_string.h"
+#include "header_libraries/exception.h"
+#include "header_libraries/expected.h"
+#include "header_libraries/make_unique.h"
+#include "header_libraries/workarounds.h"
+#include "memorymappedfile.h"
+#include "new_helper.h"
+#include "string_helpers.h"
 
 using daw::string::string_format;
 using daw::string::string_join;
@@ -309,11 +310,11 @@ namespace daw {
 #endif
 								display_progress( progress_cb, file_size, file_pos, start_time );
 							}
-							}		// while
-						} catch( const std::exception& ex ) {
-							throw ex;
-						}
-					}	// Scope around while with variables needed inside loop
+						}		// while
+					} catch( const std::exception& ex ) {
+						throw ex;
+					}
+				}	// Scope around while with variables needed inside loop
 				progress_cb( "Loading CSV Data... Processing" );
 				try {
 					if( !no_filter ) {
@@ -350,8 +351,8 @@ namespace daw {
 				} catch( const std::exception& ex ) {
 					throw ex;
 				}
-				}
 			}
+		}
 
 		parse_csv_data_param::parse_csv_data_param( std::string fileName, DataTable::size_type headerRow, std::function<bool( std::string const & )> columnFilter, std::function<void( std::string )> progressCb ) : m_file_name( std::move( fileName ) ), m_header_row( std::move( headerRow ) ), m_column_filter( std::move( columnFilter ) ), m_progress_cb( std::move( progressCb ) ) { }
 
@@ -412,18 +413,26 @@ namespace daw {
 		}
 
 		// DataTable
+		DataTable::DataTable( DataTable const & other ) : m_items( other.m_items ) { }
+
 		DataTable::DataTable( DataTable&& value ) noexcept: m_items( std::move( value.m_items ) ) { }
 
-		DataTable& DataTable::operator=(DataTable rhs) noexcept {
-			m_items = std::move( rhs.m_items );
+		DataTable& DataTable::operator=(DataTable && rhs) noexcept {
+			if( this != &rhs ) {
+				m_items = std::move( rhs.m_items );
+			}
 			return *this;
 		}
 
-			DataTable::DataTable( std::vector<DataTable::value_type> columns ) : m_items( std::move( columns ) ) { }
-
-		DataTable::DataTable( const DataTable& other ) : m_items( other.m_items ) {
-			std::cerr << "DataTable copy constructor called.  Performance issue\n";
+			DataTable& DataTable::operator=(DataTable const & rhs) {
+			if( this != &rhs ) {
+				m_items = rhs.m_items;
+			}
+			return *this;
 		}
+
+
+		DataTable::DataTable( std::vector<DataTable::value_type> columns ) : m_items( std::move( columns ) ) { }
 
 		DataTable::DataTable( std::vector<DataTable::value_type>&& items ) : m_items( std::move( items ) ) { }
 
@@ -578,5 +587,5 @@ namespace daw {
 				}
 			}
 		}	// namespace algorithm
-		}	// namespace data
-	}	// namespace daw
+	}	// namespace data
+}	// namespace daw
