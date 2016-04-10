@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 #include <exception>
-#include "header_libraries/exception.h"
+#include "header_libraries/daw_exception.h"
 #include "header_libraries/daw_string.h"
 #include <memory>
 #include "header_libraries/make_unique.h"

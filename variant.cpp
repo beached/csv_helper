@@ -22,10 +22,9 @@
 
 #include "variant.h"
 #include "string_helpers.h"
-#include "header_libraries/exception.h"
+#include "header_libraries/daw_exception.h"
 #include "header_libraries/daw_string.h"
 #include "new_helper.h"
-#include "header_libraries/workarounds.h"
 
 using daw::string::string_join;
 using namespace daw::exception;

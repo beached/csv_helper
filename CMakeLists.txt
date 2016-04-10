@@ -1,32 +1,39 @@
 cmake_minimum_required(VERSION 2.8.0)
 project(csv_helper)
+
 include(ExternalProject)
 
+set( Boost_USE_STATIC_LIBS OFF )
+set( Boost_USE_MULTITHREADED ON )
+set( Boost_USE_STATIC_RUNTIME OFF )
+find_package( Boost 1.59.0 REQUIRED COMPONENTS system filesystem unit_test_framework date_time )
+set( Boost_Libs ${BOOST_Libraries} -lboost_system -lboost_regex -lboost_filesystem -lboost_program_options -lboost_iostreams -lboost_date_time )
 
-find_package(Boost 1.55.0 COMPONENTS system filesystem unit_test_framework REQUIRED)
+MESSAGE( WARNING "Current Compiler:" ${CMAKE_CXX_COMPILER_ID} )
+IF( ${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC" )
+	MESSAGE( WARNING "Using Visual Studio" )
+	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_WIN32_WINNT=0x0601 /MP" )
+	set( Boost_Libs )
+ELSEIF( ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" )
+	MESSAGE( WARNING "Using Clang" )
+	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -stdlib=libc++ -g -Weverything -Wno-c++98-compat  -Wfatal-errors -Wno-covered-switch-default -Wno-padded -Wno-exit-time-destructors -Wno-c++98-compat-pedantic -Wno-unused-parameter -Wno-missing-noreturn -Wno-missing-prototypes -Wno-disabled-macro-expansion" )
+ELSEIF( ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" )
+	MESSAGE( WARNING "Using G++" )
+	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -g -O3 -Wall -Wno-deprecated-declarations" )
+ENDIF()
 
-set( THIRD_PARTY_FILES "${CMAKE_CURRENT_SOURCE_DIR}/third_party" )
-
-#set(CLANG_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -O3 -Weverything -Wno-c++98-compat  -Wfatal-errors -Wno-covered-switch-default -Wno-padded -Wno-exit-time-destructors -Wno-c++98-compat-pedantic -Wno-unused-parameter -Wno-missing-noreturn -Wno-missing-prototypes")
-set(CLANG_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -O3 -Weverything -Wno-c++98-compat  -Wfatal-errors -Wno-covered-switch-default -Wno-padded -Wno-exit-time-destructors -Wno-c++98-compat-pedantic -Wno-unused-parameter -Wno-missing-noreturn -Wno-missing-prototypes -Wno-weak-vtables -Wno-global-constructors")
-set(GCC_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -O3 -Wall" )
-
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    message( STATUS "Using Clang" )
-    set( CMAKE_CXX_FLAGS "${CLANG_CMAKE_CXX_FLAGS}" )
-elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    message( STATUS "Using GNU" )
-    set( CMAKE_CXX_FLAGS "${GCC_CMAKE_CXX_FLAGS}" )
-else( )
-    message( STATUS "Using Other Compiler -> ${CMAKE_CXX_COMPILER_ID}" )
-endif( )
-
-ExternalProject_Add( header_libraries
-    GIT_REPOSITORY https://github.com/beached/header_libraries#
-	SOURCE_DIR "${THIRD_PARTY_FILES}/header_libraries"
-    INSTALL_COMMAND ""
-#    UPDATE_COMMAND ""
+ExternalProject_Add( 
+	header_libraries
+	GIT_REPOSITORY "https://github.com/beached/header_libraries.git"
+	SOURCE_DIR "${CMAKE_BINARY_DIR}/3rdparty/header_libraries"
+	GIT_TAG "master"
+	PATCH_COMMAND ""
+	INSTALL_COMMAND ""
+	TEST_COMMAND ""
 )
+
+include_directories( "${CMAKE_BINARY_DIR}/3rdparty/" )
+include_directories( SYSTEM ${Boost_INCLUDE_DIRS} )
 
 set(SOURCE_FILES
 		cstring.h
@@ -49,9 +56,6 @@ set(SOURCE_FILES
 		variant.cpp
 		variant.h
 )
-
-
-include_directories( "${CMAKE_CURRENT_SOURCE_DIR}" "${THIRD_PARTY_FILES}" )
 
 #3add_library (csv_helper STATIC ${SOURCE_FILES} )
 add_library (csv_helper SHARED ${SOURCE_FILES} )

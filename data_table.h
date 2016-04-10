@@ -37,8 +37,7 @@
 #include "data_column.h"
 #include "data_types.h"
 #include "header_libraries/daw_traits.h"
-#include "header_libraries/expected.h"
-#include "header_libraries/workarounds.h"
+#include "header_libraries/daw_expected.h"
 
 namespace daw {
 	namespace data {

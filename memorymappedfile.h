@@ -24,7 +24,6 @@
 #include <boost/iostreams/positioning.hpp>
 #include <memory>
 #include <string>
-#include "header_libraries/workarounds.h"
 
 namespace daw {
 	namespace filesystem {

@@ -33,7 +33,6 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include "header_libraries/workarounds.h"
 #include "header_libraries/daw_traits.h"
 
 namespace daw {

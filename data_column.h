@@ -27,7 +27,6 @@
 
 #include "data_cell.h"
 #include "data_types.h"
-#include"header_libraries/workarounds.h"
 
 #if USE_PPL == 1
 #include <ppl.h>

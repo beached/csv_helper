@@ -31,7 +31,6 @@
 #include <utility>
 
 #include "memorymappedfile.h"
-#include "header_libraries/workarounds.h"
 
 namespace daw {
 	namespace filesystem {
