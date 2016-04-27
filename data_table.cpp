@@ -45,7 +45,6 @@
 #include "new_helper.h"
 #include "string_helpers.h"
 
-using daw::string::string_format;
 using daw::string::string_join;
 
 namespace daw {
@@ -122,7 +121,7 @@ namespace daw {
 					memcpy( ptr, m_buffer->data( m_first ), str_size );
 					cstring result( ptr );
 					result.take_ownership_of_data( );
-					return std::move( result );
+					return result;
 				}
 
 				void clear( ) noexcept {
@@ -328,14 +327,14 @@ namespace daw {
 					{
 						const auto column_size = [&result_datatable]( ) {
 							DataTable::size_type max_size = 0;
-							for( auto& column : result_datatable ) {
+							for( auto const & column : result_datatable ) {
 								if( column.size( ) > max_size ) {
 									max_size = column.size( );
 								}
 							}
 							return max_size;
 						}();
-						for( auto& column : result_datatable ) {
+						for( auto & column : result_datatable ) {
 							const auto num_to_add = column_size - column.size( );
 							if( 0 < num_to_add ) {
 								std::cerr << "Warning: While parsing table a column was missing " << num_to_add << " row(s)\n";
@@ -346,7 +345,7 @@ namespace daw {
 							column.shrink_to_fit( );
 						}
 					}
-					return std::move( result_datatable );
+					return result_datatable;
 				} catch( const std::exception& ex ) {
 					throw ex;
 				}
@@ -405,7 +404,7 @@ namespace daw {
 			const auto start_row = header_row;	// 0 > header_row ? 0 : header_row;
 			try {
 				auto result = deleniate_rows( *buffer, start_row, column_filter, progress_cb );
-				return std::move( result );
+				return result;
 			} catch( const std::exception& ex ) {
 				return Expected<DataTable>::from_exception( ex );
 			}

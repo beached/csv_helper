@@ -70,7 +70,7 @@ namespace daw {
 			}
 
 			cstring copy_string( cstring value ) {
-				return std::move( value );
+				return value;
 			}
 
 			uint32_t ptime_to_uint32( boost::posix_time::ptime value ) noexcept {

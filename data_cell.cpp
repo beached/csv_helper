@@ -207,8 +207,7 @@ namespace daw {
 			case DataCellType::empty_string:
 				return DataCell( );
 			case DataCellType::string: {
-				DataCell result( std::move( value ) );
-				return std::move( result );
+				return DataCell( std::move( value ) );
 			}
 			case DataCellType::timestamp:
 				throw daw::exception::NotImplemented( string_join( __func__, ": Use from_time_string( std::string, std::string ) for time/data types" ) );
