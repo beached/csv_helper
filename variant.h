@@ -27,8 +27,8 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/shared_array.hpp>
 #include <cinttypes>
-#include "header_libraries/daw_traits.h"
-#include "header_libraries/daw_exception.h"
+#include <daw/daw_traits.h>
+#include <daw/daw_exception.h>
 namespace daw {
 	namespace data {
 		/// <summary>A simple variant that contains all needed data types</summary>

@@ -22,8 +22,8 @@
 // SOFTWARE.
 
 #include <string>
-#include "header_libraries/scope_guard.h"
-#include "header_libraries/daw_traits.h"
+#include <daw/scope_guard.h>
+#include <daw/daw_traits.h>
 #include "new_helper.h"
 
 namespace daw {

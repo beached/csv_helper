@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 #include <exception>
-#include "header_libraries/daw_exception.h"
-#include "header_libraries/daw_string.h"
+#include <daw/daw_exception.h>
+#include <daw/daw_string.h>
 #include <memory>
-#include "header_libraries/make_unique.h"
+#include <daw/make_unique.h>
 
 template<typename T, typename... Args>
 T* new_throw( Args&&... args ) {

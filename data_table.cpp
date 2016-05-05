@@ -36,11 +36,11 @@
 #include "data_cell.h"
 #include "data_column.h"
 #include "data_table.h"
-#include "header_libraries/daw_algorithm.h"
-#include "header_libraries/daw_string.h"
-#include "header_libraries/daw_exception.h"
-#include "header_libraries/daw_expected.h"
-#include "header_libraries/make_unique.h"
+#include <daw/daw_algorithm.h>
+#include <daw/daw_string.h>
+#include <daw/daw_exception.h>
+#include <daw/daw_expected.h>
+#include <daw/make_unique.h>
 #include "memorymappedfile.h"
 #include "new_helper.h"
 #include "string_helpers.h"

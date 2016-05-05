@@ -22,8 +22,8 @@
 
 #include "variant.h"
 #include "string_helpers.h"
-#include "header_libraries/daw_exception.h"
-#include "header_libraries/daw_string.h"
+#include <daw/daw_exception.h>
+#include <daw/daw_string.h>
 #include "new_helper.h"
 
 using daw::string::string_join;
