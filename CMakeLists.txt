@@ -61,13 +61,11 @@ set( SOURCE_FILES
 		variant.cpp
 )
 
-add_library( csv_helper SHARED ${HEADER_FILES} ${SOURCE_FILES} )
-add_library( csv_helper_static STATIC ${HEADER_FILES} ${SOURCE_FILES} )
+add_library( csv_helper STATIC ${HEADER_FILES} ${SOURCE_FILES} )
 
 add_dependencies( csv_helper header_libraries_prj )
 
 install( TARGETS csv_helper DESTINATION lib )
-install( TARGETS csv_helper_static DESTINATION lib )
 
 foreach( CUR_PREFIX ${HEADER_FILES} )
 	install( FILES "${CUR_PREFIX}" DESTINATION include/daw/csv_helper )
