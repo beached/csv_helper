@@ -50,7 +50,7 @@ set( HEADER_FILES
 		new_helper.h
 		string_helpers.h
 		variant.h
- )
+)
 
 set( SOURCE_FILES
 		data_cell.cpp
@@ -59,11 +59,13 @@ set( SOURCE_FILES
 		memorymappedfile.cpp
 		string_helpers.cpp
 		variant.cpp
- )
+)
 
 add_library( csv_helper SHARED ${HEADER_FILES} ${SOURCE_FILES} )
 add_library( csv_helper_static STATIC ${HEADER_FILES} ${SOURCE_FILES} )
+
 add_dependencies( csv_helper header_libraries )
+
 install( TARGETS csv_helper DESTINATION lib )
 install( TARGETS csv_helper_static DESTINATION lib )
 
