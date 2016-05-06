@@ -1,5 +1,5 @@
 cmake_minimum_required( VERSION 2.8.0 )
-project( csv_helper )
+project( csv_helper_prj )
 
 include( ExternalProject )
 
@@ -23,7 +23,7 @@ elseif( ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" )
 endif( )
 
 ExternalProject_Add( 
-	header_libraries
+	header_libraries_prj
 	GIT_REPOSITORY "https://github.com/beached/header_libraries.git"
 	SOURCE_DIR "${CMAKE_BINARY_DIR}/3rdparty/header_libraries"
 	GIT_TAG "master"
@@ -64,7 +64,7 @@ set( SOURCE_FILES
 add_library( csv_helper SHARED ${HEADER_FILES} ${SOURCE_FILES} )
 add_library( csv_helper_static STATIC ${HEADER_FILES} ${SOURCE_FILES} )
 
-add_dependencies( csv_helper header_libraries )
+add_dependencies( csv_helper header_libraries_prj )
 
 install( TARGETS csv_helper DESTINATION lib )
 install( TARGETS csv_helper_static DESTINATION lib )
