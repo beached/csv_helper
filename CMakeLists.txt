@@ -10,7 +10,7 @@ find_package( Boost 1.59.0 REQUIRED COMPONENTS system filesystem unit_test_frame
 set( Boost_Libs ${BOOST_Libraries} -lboost_system -lboost_regex -lboost_filesystem -lboost_program_options -lboost_iostreams -lboost_date_time )
 
 message( WARNING "Current Compiler:" ${CMAKE_CXX_COMPILER_ID} )
-if( ${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC" )
+if( ${CMAKE_CXX_COMPILER_ID} STREQUAL 'MSVC' )
 	message( WARNING "Using Visual Studio" )
 	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_WIN32_WINNT=0x0601 /MP" )
 	set( Boost_Libs )
