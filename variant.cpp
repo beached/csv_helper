@@ -24,7 +24,7 @@
 #include "string_helpers.h"
 #include <daw/daw_exception.h>
 #include <daw/daw_string.h>
-#include "new_helper.h"
+#include <daw/daw_newhelper.h>
 
 using daw::string::string_join;
 using namespace daw::exception;
@@ -67,10 +67,6 @@ namespace daw {
 				memcpy( result, value, len );
 				result[len] = 0;
 				return result;
-			}
-
-			auto copy_string( cstring value ) {
-				return value;
 			}
 
 			uint32_t ptime_to_uint32( boost::posix_time::ptime value ) noexcept {
@@ -135,7 +131,7 @@ namespace daw {
 			if( this != &value ) {
 				m_type = value.m_type;
 				if( m_type == DataCellType::string ) {
-					m_value.m_string = copy_string( value.m_value.m_string );
+					m_value.m_string = ::daw::data::copy_string( value.m_value.m_string );
 				} else {
 					m_value.m_string = value.m_value.m_string;
 				}
@@ -145,7 +141,7 @@ namespace daw {
 
 		Variant::Variant( Variant const & value ) : m_type( value.m_type ) {
 			if( m_type == DataCellType::string ) {
-				m_value.m_string = copy_string( value.m_value.m_string );
+				m_value.m_string = ::daw::data::copy_string( value.m_value.m_string );
 			} else {
 				m_value.m_string = value.m_value.m_string;
 			}

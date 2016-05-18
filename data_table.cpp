@@ -31,7 +31,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "cstring.h"
+#include <daw/daw_cstring.h>
 #include "data_algorithms.h"
 #include "data_cell.h"
 #include "data_column.h"
@@ -41,8 +41,8 @@
 #include <daw/daw_exception.h>
 #include <daw/daw_expected.h>
 #include <daw/make_unique.h>
-#include "memorymappedfile.h"
-#include "new_helper.h"
+#include <daw/memorymappedfile.h>
+#include <daw/daw_newhelper.h>
 #include "string_helpers.h"
 
 using daw::string::string_join;

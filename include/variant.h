@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "cstring.h"
+#include <daw/daw_cstring.h>
 #include "data_types.h"
 #include "defs.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
