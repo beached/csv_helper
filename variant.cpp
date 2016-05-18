@@ -69,7 +69,7 @@ namespace daw {
 				return result;
 			}
 
-			cstring copy_string( cstring value ) {
+			auto copy_string( cstring value ) {
 				return value;
 			}
 

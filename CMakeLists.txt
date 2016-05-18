@@ -30,20 +30,23 @@ ExternalProject_Add(
 include_directories( SYSTEM "${CMAKE_BINARY_DIR}/install/include" )
 include_directories( SYSTEM ${Boost_INCLUDE_DIRS} )
 
+set( HEADER_FOLDER "include" )
+include_directories( ${HEADER_FOLDER} )
+
 set( HEADER_FILES
-		cstring.h
-		data_algorithms.h
-		data_cell.h
-		data_column.h
-		data_common.h
-		data_container.h
-		data_table.h
-		data_types.h
-		defs.h
-		memorymappedfile.h
-		new_helper.h
-		string_helpers.h
-		variant.h
+		${HEADER_FOLDER}/cstring.h
+		${HEADER_FOLDER}/data_algorithms.h
+		${HEADER_FOLDER}/data_cell.h
+		${HEADER_FOLDER}/data_column.h
+		${HEADER_FOLDER}/data_common.h
+		${HEADER_FOLDER}/data_container.h
+		${HEADER_FOLDER}/data_table.h
+		${HEADER_FOLDER}/data_types.h
+		${HEADER_FOLDER}/defs.h
+		${HEADER_FOLDER}/memorymappedfile.h
+		${HEADER_FOLDER}/new_helper.h
+		${HEADER_FOLDER}/string_helpers.h
+		${HEADER_FOLDER}/variant.h
 )
 
 set( SOURCE_FILES
@@ -60,9 +63,5 @@ add_library( csv_helper STATIC ${HEADER_FILES} ${SOURCE_FILES} )
 add_dependencies( csv_helper header_libraries_prj )
 
 install( TARGETS csv_helper DESTINATION lib )
-
-foreach( CUR_PREFIX ${HEADER_FILES} )
-	install( FILES "${CUR_PREFIX}" DESTINATION include/daw/csv_helper )
-endforeach( CUR_PREFIX )
-
+install( DIRECTORY ${HEADER_FOLDER}/ DESTINATION include/daw/csv_helper )
 

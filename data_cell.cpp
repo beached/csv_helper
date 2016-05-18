@@ -62,15 +62,13 @@ namespace daw {
 				using charT = char;
 				// Can only set locale once per application start.  It was slow
 				static const std::locale loc = std::locale( locale_str.c_str( ) );
-				static const charT decimal_point = std::use_facet< std::numpunct<charT>>( loc ).decimal_point( );
+				static const charT decimal_point = std::use_facet<std::numpunct<charT>>( loc ).decimal_point( );
 
-				bool is_negative = false;
 				bool has_decimal = false;
 
 				size_t startpos = 0;
 
 				if( '-' == value[startpos] ) {
-					is_negative = true;
 					startpos = 1;
 				}
 
