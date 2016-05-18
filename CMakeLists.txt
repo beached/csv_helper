@@ -38,8 +38,6 @@ externalproject_add(
 	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install
 )
 
-
-
 include_directories( SYSTEM "${CMAKE_BINARY_DIR}/install/include" )
 include_directories( SYSTEM ${Boost_INCLUDE_DIRS} )
 
