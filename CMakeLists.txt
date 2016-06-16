@@ -32,16 +32,16 @@ endif( )
 ExternalProject_Add( 
 	header_libraries_prj
 	GIT_REPOSITORY "https://github.com/beached/header_libraries.git"
-	SOURCE_DIR "${CMAKE_BINARY_DIR}/3rdparty/header_libraries"
+	SOURCE_DIR "${DEP_BINARY_DIR}/dependencies/header_libraries"
 	BINARY_DIR "${DEP_BINARY_DIR}"
+	INSTALL_DIR "${DEP_BINARY_DIR}/install"
+	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${DEP_BINARY_DIR}/install
 	GIT_TAG "master"
 	PATCH_COMMAND ""
-	INSTALL_DIR "${CMAKE_BINARY_DIR}/install"
 	TEST_COMMAND ""
-	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install
  )
 
-include_directories( SYSTEM "${CMAKE_BINARY_DIR}/install/include" )
+include_directories( SYSTEM "${DEP_BINARY_DIR}/install/include" )
 include_directories( SYSTEM ${Boost_INCLUDE_DIRS} )
 
 set( HEADER_FOLDER "include" )
