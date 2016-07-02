@@ -30,7 +30,7 @@ else( )
 endif( )
 
 ExternalProject_Add( 
-	header_libraries_prj
+	headlibsprj
 	GIT_REPOSITORY "https://github.com/beached/header_libraries.git"
 	SOURCE_DIR "${DEP_BINARY_DIR}/deps/headlibs"
 	BINARY_DIR "${DEP_BINARY_DIR}"
@@ -70,7 +70,7 @@ set( SOURCE_FILES
 
 add_library( csv_helper STATIC ${HEADER_FILES} ${SOURCE_FILES} )
 
-add_dependencies( csv_helper header_libraries_prj )
+add_dependencies( csv_helper headlibsprj )
 
 install( TARGETS csv_helper DESTINATION lib )
 install( DIRECTORY ${HEADER_FOLDER}/ DESTINATION include/daw/csv_helper )
