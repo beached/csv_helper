@@ -352,37 +352,29 @@ namespace daw {
 			}
 		}
 
-		parse_csv_data_param::parse_csv_data_param( std::string fileName, DataTable::size_type headerRow, std::function<bool( std::string const & )> columnFilter, std::function<void( std::string )> progressCb ) : m_file_name( std::move( fileName ) ), m_header_row( std::move( headerRow ) ), m_column_filter( std::move( columnFilter ) ), m_progress_cb( std::move( progressCb ) ) { }
+		parse_csv_data_param::parse_csv_data_param( std::string fileName, DataTable::size_type headerRow, column_filter_t columnFilter, progress_cb_t progressCb ):
+				m_file_name{ std::move( fileName ) }, 
+				m_header_row{ headerRow },
+				m_column_filter{ std::move( columnFilter ) },
+				m_progress_cb{ std::move( progressCb ) } { }
 
-		parse_csv_data_param::parse_csv_data_param( parse_csv_data_param&& param ) : m_file_name( std::move( param.m_file_name ) ), m_header_row( std::move( param.m_header_row ) ), m_column_filter( std::move( param.m_column_filter ) ), m_progress_cb( std::move( param.m_progress_cb ) ) { }
-
-		parse_csv_data_param::parse_csv_data_param( const parse_csv_data_param& param ) : m_file_name( param.m_file_name ), m_header_row( param.m_header_row ), m_column_filter( param.m_column_filter ), m_progress_cb( param.m_progress_cb ) { }
-
-		parse_csv_data_param& parse_csv_data_param::operator=(parse_csv_data_param param) noexcept {
-			m_file_name = std::move( param.m_file_name );
-			m_header_row = std::move( param.m_header_row );
-			m_column_filter = std::move( param.m_column_filter );
-			m_progress_cb = std::move( param.m_progress_cb );
-			return *this;
-		}
-
-			std::string const & parse_csv_data_param::file_name( ) const noexcept {
+		std::string const & parse_csv_data_param::file_name( ) const noexcept {
 			return m_file_name;
 		}
 
-			const DataTable::size_type& parse_csv_data_param::header_row( ) const noexcept {
+		DataTable::size_type const & parse_csv_data_param::header_row( ) const noexcept {
 			return m_header_row;
 		}
 
-			const std::function<bool( std::string const & )>& parse_csv_data_param::column_filter( ) const noexcept {
+		std::function<bool( std::string const & )> const & parse_csv_data_param::column_filter( ) const noexcept {
 			return m_column_filter;
 		}
 
-			const std::function<void( std::string )>& parse_csv_data_param::progress_cb( ) const noexcept {
+		std::function<void( std::string )> const & parse_csv_data_param::progress_cb( ) const noexcept {
 			return m_progress_cb;
 		}
 
-			Expected<DataTable> parse_csv_data( const parse_csv_data_param& param ) {
+		Expected<DataTable> parse_csv_data( parse_csv_data_param const & param ) {
 			return parse_csv_data( param.file_name( ), param.header_row( ), param.column_filter( ), param.progress_cb( ) );
 		}
 

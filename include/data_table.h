@@ -115,23 +115,27 @@ namespace daw {
 		void swap( DataTable & lhs, DataTable & rhs ) noexcept;
 
 		struct parse_csv_data_param {
+			using column_filter_t = std::function<bool( std::string const & )>;
+			using progress_cb_t = std::function<void( std::string )>;
 		private:
 			std::string m_file_name;
 			DataTable::size_type m_header_row;
-			std::function<bool( std::string const & )> m_column_filter;
-			std::function<void( std::string )> m_progress_cb;
+			column_filter_t m_column_filter;
+			progress_cb_t m_progress_cb;
 		public:
 			parse_csv_data_param( ) = delete;
-			parse_csv_data_param( std::string fileName, DataTable::size_type headerRow, std::function<bool( const std::string& )> columnFilter = nullptr, std::function<void( std::string )> progressCb = nullptr );
-			parse_csv_data_param( parse_csv_data_param&& param );
-			parse_csv_data_param( const parse_csv_data_param& param );
-			parse_csv_data_param& operator=(parse_csv_data_param param) noexcept;
+			parse_csv_data_param( std::string fileName, DataTable::size_type headerRow, column_filter_t columnFilter = nullptr, progress_cb_t progressCb = nullptr );
+			parse_csv_data_param( parse_csv_data_param && ) = default;
+			parse_csv_data_param( parse_csv_data_param const & ) = default;
+			parse_csv_data_param & operator=( parse_csv_data_param && ) = default;
+			parse_csv_data_param & operator=( parse_csv_data_param const & ) = default;
 
-			bool operator==(const parse_csv_data_param& rhs) const = delete;
+			bool operator==( parse_csv_data_param const & ) const = delete;
+
 			std::string const & file_name( ) const noexcept;
-			const DataTable::size_type& header_row( ) const noexcept;
-			const std::function<bool( std::string const & )>& column_filter( ) const noexcept;
-			const std::function<void( std::string )>& progress_cb( ) const noexcept;
+			DataTable::size_type const & header_row( ) const noexcept;
+			std::function<bool( std::string const & )> const & column_filter( ) const noexcept;
+			std::function<void( std::string )> const & progress_cb( ) const noexcept;
 		};
 		//TOOD static_assert(daw::traits::is_regular<parse_csv_data_param>::value, "parse_csv_data_param isn't regular");
 
