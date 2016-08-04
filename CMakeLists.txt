@@ -6,7 +6,7 @@ include( ExternalProject )
 set( Boost_USE_STATIC_LIBS OFF )
 set( Boost_USE_MULTITHREADED ON )
 set( Boost_USE_STATIC_RUNTIME OFF )
-find_package( Boost 1.59.0 REQUIRED COMPONENTS system filesystem unit_test_framework date_time )
+find_package( Boost 1.58.0 REQUIRED COMPONENTS date_time )
 
 IF( ${CMAKE_CXX_COMPILER_ID} STREQUAL 'MSVC' )
 	add_compile_options( -D_WIN32_WINNT=0x0601 ) 
