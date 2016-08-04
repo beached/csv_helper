@@ -41,8 +41,7 @@
 
 namespace daw {
 	namespace data {
-		class DataTable {
-		public:
+		struct DataTable {
 			using cell_type = DataCell;
 			using value_type = DataColumn < std::vector<cell_type> > ;
 			//TODO static_assert(daw::traits::is_regular<value_type>::value, "DataColumn isn't regular");
