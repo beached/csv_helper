@@ -114,7 +114,7 @@ namespace daw {
 		//TODO static_assert(daw::traits::is_regular<DataTable>::value, "DataTable isn't regular");
 		void swap( DataTable & lhs, DataTable & rhs ) noexcept;
 
-		struct parse_csv_data_param {
+		struct parse_csv_data_param final {
 			using column_filter_t = std::function<bool( std::string const & )>;
 			using progress_cb_t = std::function<void( std::string )>;
 		private:
@@ -124,6 +124,7 @@ namespace daw {
 			progress_cb_t m_progress_cb;
 		public:
 			parse_csv_data_param( ) = delete;
+			~parse_csv_data_param( ) = default;
 			parse_csv_data_param( std::string fileName, DataTable::size_type headerRow, column_filter_t columnFilter = nullptr, progress_cb_t progressCb = nullptr );
 			parse_csv_data_param( parse_csv_data_param && ) = default;
 			parse_csv_data_param( parse_csv_data_param const & ) = default;
