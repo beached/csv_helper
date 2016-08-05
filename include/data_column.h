@@ -41,7 +41,7 @@
 namespace daw {
 	namespace data {
 		template<typename StorageType>
-		class DataColumn {
+		class DataColumn final {
 		public:
 			using value_type = typename StorageType::value_type;
 			using reference = value_type&;
@@ -67,42 +67,46 @@ namespace daw {
 			}
 
 		public:
-			DataColumn( const std::string& header = "" ) noexcept : m_items( ), m_header( header ), m_hidden( false ) { }
+			DataColumn( std::string header = "" ) noexcept:
+					m_items{ },
+					m_header{ std::move( header ) }, 
+					m_hidden{ false } { }
+
 			~DataColumn( ) = default;
 
 
-			bool operator==(DataColumn const &) const = delete;
+			bool operator==( DataColumn const & ) const = delete;
 
 			DataColumn( DataColumn const & ) = default;
-			DataColumn& operator=(DataColumn const & rhs) = default;
+			DataColumn & operator=( DataColumn const & ) = default;
 
-			DataColumn( DataColumn&& other ) noexcept: 
-				m_items( std::move( other.m_items ) ), 
-				m_header( std::move( other.m_header ) ), 
-				m_hidden( std::move( other.m_hidden ) ) { }
+			DataColumn( DataColumn && other ) noexcept: 
+				m_items{ std::move( other.m_items ) }, 
+				m_header{ std::move( other.m_header ) }, 
+				m_hidden{ std::move( other.m_hidden ) } { }
 
-			DataColumn& operator=(DataColumn && rhs) noexcept {
+			friend void swap( DataColumn & lhs, DataColumn & rhs ) noexcept {
+				using std::swap;
+				swap( lhs.m_items, rhs.m_items );
+				swap( lhs.m_header, rhs.m_header );
+				swap( lhs.m_hidden, rhs.m_hidden );
+			}
+
+			DataColumn& operator=( DataColumn && rhs ) noexcept {
 				if( this != &rhs ) {
-					m_items = std::move( rhs.m_items );
-					m_header = std::move( rhs.m_header );
-					m_hidden = std::move( rhs.m_hidden );
+					DataColumn tmp{ std::move( rhs ) };
+					using std::swap;
+					swap( *this, tmp );
 				}
 				return *this;
 			}
 	
-			void swap( DataColumn & rhs ) noexcept {
-				using std::swap;
-				swap( m_items, rhs.m_items );
-				swap( m_header, rhs.m_header );
-				swap( m_hidden, rhs.m_hidden );
-			}
-
 			void shrink_to_fit( ) {
 				shrink_to_fit( m_items );
 			}
 
 			template<typename Container>
-			inline static void shrink_to_fit( Container& values ) {
+			inline static void shrink_to_fit( Container & values ) {
 				values.shrink_to_fit( );
 			}
 
@@ -124,27 +128,27 @@ namespace daw {
 				m_items.erase( m_items.begin( ) + static_cast<difference_type>(pos) );
 			}
 
-			const std::string& header( ) const {
+			std::string const & header( ) const {
 				return m_header;
 			}
 
-			std::string& header( ) noexcept {
+			std::string & header( ) noexcept {
 				return m_header;
 			}
 
-				bool& hidden( ) noexcept {
+			bool & hidden( ) noexcept {
 				return m_hidden;
 			}
 
-				const bool& hidden( ) const noexcept {
+			bool const & hidden( ) const noexcept {
 				return m_hidden;
 			}
 
-				reference operator[]( const size_type pos ) {
+			reference operator[]( size_type pos ) {
 				return item( pos );
 			}
 
-			const_reference operator[]( const size_type pos ) const {
+			const_reference operator[]( size_type pos ) const {
 				return item( pos );
 			}
 
@@ -200,19 +204,14 @@ namespace daw {
 				return m_items.size( );
 			}
 
-				bool empty( ) const noexcept {
+			bool empty( ) const noexcept {
 				return m_items.empty( );
 			}
 
-				void clear( ) {
+			void clear( ) {
 				m_items.clear( );
 			}
 		};	// DataColumn
-
-		template<typename StorageType>
-		void swap( DataColumn<StorageType> & lhs,  DataColumn<StorageType> & rhs ) {
-			lhs.swap( rhs );
-		}
 
 		void convert_column_to_timestamp( DataColumn<std::vector<DataCell>> & column, bool is_nullable = true, boost::string_ref format = "%d/%m/%y %H:%M:%S" );
 	}	// namespace data
