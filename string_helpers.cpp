@@ -21,7 +21,6 @@
 // SOFTWARE.
 
 #include "string_helpers.h"
-#include <daw/make_unique.h>
 #include <daw/daw_string.h>
 #include <memory>
 #include <string>
@@ -33,7 +32,7 @@ namespace daw {
 				static std::stringstream ss( "" );
 				static std::unique_ptr<boost::posix_time::time_facet> facet;
 				if( !facet ) {
-					facet = daw::make_unique<boost::posix_time::time_facet>( 1u );
+					facet = std::make_unique<boost::posix_time::time_facet>( 1u );
 					ss.imbue( std::locale( std::locale( locale_str.c_str( ) ), facet.get( ) ) );
 				}
 				clear( ss );
