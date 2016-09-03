@@ -39,41 +39,6 @@ namespace boost { namespace posix_time {
 }
 namespace daw {
 	namespace data {
-		namespace {
-			char const * create_copy( char const * value, size_t length ) {
-				if( nullptr == value ) {
-					return value;
-				}
-				if( 0 == length ) {
-					length = strlen( value );
-				}
-				if( value[length - 1] != 0 ) {
-					++length;
-				}
-				char* result = new_array_throw<char>( length );
-				result[length - 1] = 0;
-				memcpy( result, value, length );
-				return result;
-			}
-
-			/// <summary>We expect to own the string</summary>
-			char * copy_string( char const * value ) {
-				if( nullptr == value ) {
-					return nullptr;
-				}
-				const auto len = strlen( value );
-				if( 0 == len ) {
-					return nullptr;
-				}
-
-				char * result = new_array_throw<char>( len + 1 );
-				memcpy( result, value, len );
-				result[len] = 0;
-				return result;
-			}
-
-		}	// namespace anonymous
-
 		Variant::Variant( ): 
 			m_type{ DataCellType::empty_string }, 
 			m_value{ } { }
