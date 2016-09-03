@@ -28,7 +28,6 @@
 #include "string_helpers.h"
 #include <daw/daw_exception.h>
 #include <daw/daw_string.h>
-#include <daw/make_unique.h>
 #include <daw/daw_string.h>
 #include <exception>
 #include <iomanip>
@@ -222,7 +221,7 @@ namespace daw {
 			static std::stringstream ss;
 			static std::unique_ptr<boost::posix_time::time_input_facet> facet;
 			if( !facet ) {
-				facet = daw::make_unique<boost::posix_time::time_input_facet>( 1u );
+				facet = std::make_unique<boost::posix_time::time_input_facet>( 1u );
 				ss.imbue( std::locale( std::locale( ), facet.get( ) ) );
 			}
 			clear( ss );
