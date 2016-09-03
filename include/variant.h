@@ -1,7 +1,6 @@
-#pragma once
 // The MIT License (MIT)
 //
-// Copyright (c) 2013-2015 Darrell Wright
+// Copyright (c) 2013-2016 Darrell Wright
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files( the "Software" ), to deal
@@ -21,46 +20,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <daw/daw_cstring.h>
-#include "data_types.h"
-#include "defs.h"
+#pragma once
+
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/shared_array.hpp>
 #include <cinttypes>
+
+#include <daw/daw_cstring.h>
 #include <daw/daw_traits.h>
 #include <daw/daw_exception.h>
+#include <daw/daw_variant.h>
+
+#include "data_types.h"
+#include "defs.h"
+namespace boost { namespace posix_time {
+		std::string to_string( boost::posix_time::ptime const & ts );
+	} 
+}
 namespace daw {
 	namespace data {
-		/// <summary>A simple variant that contains all needed data types</summary>
-#if PACK_VARIANT == 1
-#pragma pack( 1 )
-#endif
-		union variant_union_t {
-			static_assert(daw::traits::max_sizeof<integer_t, real_t, uint32_t, char*>::value == sizeof( char* ), "char* is not the largest item in variant_union_t.  This has been assumed and is bad.");
-			integer_t m_integer;
-			real_t m_real;
-			uint32_t m_timestamp;
-			char const * m_string;
-
-			explicit variant_union_t( ) noexcept;
-			explicit variant_union_t( variant_union_t const & value );
-			variant_union_t& operator=(variant_union_t const & value);
-			explicit variant_union_t( variant_union_t&& value ) noexcept;
-			variant_union_t& operator=(variant_union_t&& value) noexcept;
-			~variant_union_t( ) = default;
-
-			explicit variant_union_t( integer_t value ) noexcept;
-			explicit variant_union_t( real_t value ) noexcept;
-			explicit variant_union_t( uint32_t value ) noexcept;
-			explicit variant_union_t( cstring value ) noexcept;
-
-			void swap( variant_union_t & rhs ) noexcept;
-		};
-		
-		void swap( variant_union_t & lhs, variant_union_t & rhs ) noexcept;
-
 
 		class Variant {
+			DataCellType m_type;
+			using value_t = daw::variant_t<integer_t, real_t, timestamp_t, daw::data::cstring>;
+			value_t m_value;
 		public:
 			Variant( );
 
@@ -81,29 +64,23 @@ namespace daw {
 
 			integer_t const & integer( ) const;
 			real_t const & real( ) const;
-			timestamp_t timestamp( ) const;
+			timestamp_t const & timestamp( ) const;
 
 			std::string string( std::string locale = "" ) const;
 
 			static int compare( Variant const & lhs, Variant const & rhs );
 
-			bool operator==(Variant const & rhs) const;
-			bool operator!=(Variant const & rhs) const;
-
-			bool operator<(Variant const & rhs) const;
-			bool operator>(Variant const & rhs) const;
-			bool operator<=(Variant const & rhs) const;
-			bool operator>=(Variant const & rhs) const;
-			
 			void swap( Variant & rhs ) noexcept;
-		private:
-			DataCellType m_type;
-			variant_union_t m_value;
-		};
-#if PACK_VARIANT == 1
-#pragma pack( )
-#endif
-		
-	void swap( Variant & lhs, Variant & rhs ) noexcept;
+		};	// Variant
+
+		bool operator==(Variant const & lhs, Variant const & rhs);
+		bool operator!=(Variant const & lhs, Variant const & rhs);
+
+		bool operator<(Variant const & lhs, Variant const & rhs);
+		bool operator>(Variant const & lhs, Variant const & rhs);
+		bool operator<=(Variant const & lhs, Variant const & rhs);
+		bool operator>=(Variant const & lhs, Variant const & rhs);
+
+		void swap( Variant & lhs, Variant & rhs ) noexcept;
 	}	// namespace data
 }	// namespace daw

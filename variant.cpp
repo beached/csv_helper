@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2013-2015 Darrell Wright
+// Copyright (c) 2013-2016 Darrell Wright
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files( the "Software" ), to deal
@@ -20,15 +20,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "variant.h"
-#include "string_helpers.h"
 #include <daw/daw_exception.h>
 #include <daw/daw_string.h>
 #include <daw/daw_newhelper.h>
+#include <daw/daw_variant.h>
+
+#include "string_helpers.h"
+#include "variant.h"
 
 using daw::string::string_join;
 using namespace daw::exception;
 
+namespace boost { namespace posix_time {
+		std::string to_string( boost::posix_time::ptime const & ts ) {
+			return daw::string::ptime_to_string( ts, "%Y-%m-%d %H:%M:%S %Z", "" );
+		}
+	}
+}
 namespace daw {
 	namespace data {
 		namespace {
@@ -48,111 +56,58 @@ namespace daw {
 				return result;
 			}
 
-			boost::posix_time::ptime get_epoch( ) {
-				static auto const s_epoch = boost::posix_time::time_from_string( "1970-01-01 00:00:00.000" );
-				return s_epoch;
-			}
-
 			/// <summary>We expect to own the string</summary>
-			char const * copy_string( char const * value ) {
+			char * copy_string( char const * value ) {
 				if( nullptr == value ) {
-					return value;
+					return nullptr;
 				}
 				const auto len = strlen( value );
 				if( 0 == len ) {
 					return nullptr;
 				}
 
-				auto result = new_array_throw<char>( len + 1 );
+				char * result = new_array_throw<char>( len + 1 );
 				memcpy( result, value, len );
 				result[len] = 0;
 				return result;
 			}
 
-			uint32_t ptime_to_uint32( boost::posix_time::ptime value ) noexcept {
-				const auto diff = value - get_epoch( );
-				assert( 0 <= diff.total_seconds( ) );
-				return static_cast<uint32_t>(diff.total_seconds( ));
-			}
+		}	// namespace anonymous
 
-				boost::posix_time::ptime uint32_to_ptime( uint32_t value ) noexcept {
-				return get_epoch( ) + boost::posix_time::seconds( value );
-			}
-		}
+		Variant::Variant( ): 
+			m_type{ DataCellType::empty_string }, 
+			m_value{ } { }
 
-		variant_union_t::variant_union_t( ) noexcept : m_string( nullptr ) { }
+		Variant::Variant( Variant && value ) noexcept: 
+				m_type{ std::move( value.m_type ) },
+				m_value{ std::move( value.m_value ) } {
 
-		variant_union_t::variant_union_t( variant_union_t const & value ) : m_string( create_copy( value.m_string, std::numeric_limits<size_t>::max( ) ) ) { }
-
-		variant_union_t & variant_union_t::operator=(variant_union_t const & value) {
-			if( this != &value ) {
-				m_string = create_copy( value.m_string, std::numeric_limits<size_t>::max( ) );
-			}
-			return *this;
-		}
-
-		variant_union_t::variant_union_t( variant_union_t && value ) noexcept: m_string( std::move( value.m_string ) ) {
-			value.m_string = nullptr;
-		}
-
-		variant_union_t & variant_union_t::operator=(variant_union_t && value) noexcept {
-			if( this != &value ) {
-				m_string = std::move( value.m_string );
-				value.m_string = nullptr;
-			}
-			return *this;
-		}
-
-		void variant_union_t::swap( variant_union_t & rhs ) noexcept {
-			using std::swap;
-			swap( m_string, rhs.m_string );
-		}
-
-		variant_union_t::variant_union_t( integer_t value ) noexcept : m_integer( std::move( value ) ) { }
-		variant_union_t::variant_union_t( real_t value ) noexcept: m_real( std::move( value ) ) { }
-		variant_union_t::variant_union_t( uint32_t value ) noexcept: m_timestamp( std::move( value ) ) { }
-		variant_union_t::variant_union_t( cstring value ) noexcept: m_string( value.move( ) ) { }
-
-			
-		void swap( variant_union_t & lhs, variant_union_t & rhs ) noexcept {
-			lhs.swap( rhs );
-		}
-
-		Variant::Variant( ): m_type( DataCellType::empty_string ), m_value( ) { };
-
-		Variant::Variant( Variant && value ) noexcept: m_type( std::move( value.m_type ) ), m_value( std::move( value.m_value ) ) {
 			if( DataCellType::string == m_type ) {
-				value.m_value.m_string = nullptr;
+				get<daw::data::cstring>(value.m_value) = nullptr;
 				value.m_type = DataCellType::empty_string;
 			}
 		}
 
-		Variant & Variant::operator=(Variant const & value) {
-			if( this != &value ) {
-				m_type = value.m_type;
-				if( m_type == DataCellType::string ) {
-					m_value.m_string = ::daw::data::copy_string( value.m_value.m_string );
-				} else {
-					m_value.m_string = value.m_value.m_string;
-				}
+		Variant::Variant( Variant const & value ):
+					m_type{ value.m_type },
+					m_value{ value.m_value } { }
+
+		Variant & Variant::operator=( Variant const & rhs ) {
+			if( this != &rhs ) {
+				Variant tmp{ rhs };
+				tmp.swap( *this );
 			}
 			return *this;
 		}
 
-		Variant::Variant( Variant const & value ) : m_type( value.m_type ) {
-			if( m_type == DataCellType::string ) {
-				m_value.m_string = ::daw::data::copy_string( value.m_value.m_string );
-			} else {
-				m_value.m_string = value.m_value.m_string;
+		Variant & Variant::operator=( Variant && rhs ) noexcept {
+			if( this != &rhs ) {
+				Variant tmp{ std::move( rhs ) };
+				tmp.swap( *this );
 			}
-		}
-
-		Variant & Variant::operator=(Variant && value) noexcept {
-			m_type = std::move( value.m_type );
-			m_value = std::move( value.m_value );
 			return *this;
 		}
-	
+
 		void Variant::swap( Variant & rhs ) noexcept {
 			using std::swap;
 			swap( m_type, rhs.m_type );
@@ -160,22 +115,25 @@ namespace daw {
 		}
 
 		Variant::~Variant( ) noexcept {
-			if( DataCellType::string == m_type && nullptr != m_value.m_string ) {
+			if( m_value && DataCellType::string == m_type && get<daw::data::cstring>(m_value).is_null( ) ) {
 				try {
-					auto tmp = const_cast<char*>(m_value.m_string);
-					const auto len = strlen( tmp );
-					memset( tmp, 0, len );
-					delete[] m_value.m_string;
-					m_value.m_string = nullptr;
+					m_value.reset( );
+					m_type = DataCellType::empty_string;
 				} catch( ... ) { /* ignore */ }
 			}
 		}
 
-		Variant::Variant( integer_t value ):m_type( DataCellType::integer ), m_value( std::move( value ) ) { }
+		Variant::Variant( integer_t value ):
+			m_type{ DataCellType::integer }, 
+			m_value{ std::move( value ) } { }
 
-		Variant::Variant( real_t value ): m_type( DataCellType::real ), m_value( std::move( value ) ) { }
+		Variant::Variant( real_t value ): 
+			m_type{ DataCellType::real },
+			m_value{ std::move( value ) } { }
 
-		Variant::Variant( timestamp_t value ): m_type( DataCellType::timestamp ), m_value( ptime_to_uint32( value ) ) { }
+		Variant::Variant( timestamp_t value ):
+			m_type{ DataCellType::timestamp },
+			m_value{ std::move( value ) } { }
 
 		namespace {
 			cstring copy_when_needed( cstring value ) {
@@ -187,45 +145,47 @@ namespace daw {
 			}
 		}
 
-		Variant::Variant( cstring value ) : m_type( value.is_null( ) ? DataCellType::empty_string : DataCellType::string ), m_value( copy_when_needed( std::move( value ) ) ) { };
+		Variant::Variant( cstring value ) : 
+			m_type{ value.is_null( ) ? DataCellType::empty_string : DataCellType::string },
+			m_value{ copy_when_needed( std::move( value ) ) } { };
 
-		const integer_t& Variant::integer( ) const {
+		integer_t const & Variant::integer( ) const {
 			dbg_throw_on_false( DataCellType::integer == m_type, "{0}: Attempt to extract an integer from a non-integer", __func__ );
-			return m_value.m_integer;
+			return get<integer_t>(m_value);
 		}
 
-		const real_t& Variant::real( ) const {
+		real_t const & Variant::real( ) const {
 			dbg_throw_on_false( DataCellType::real == m_type, "{0}: Attempt to extract an real from a non-real", __func__ );
-			return m_value.m_real;
+			return get<real_t>(m_value);
 		}
 
-		timestamp_t Variant::timestamp( ) const {
+		timestamp_t const & Variant::timestamp( ) const {
 			dbg_throw_on_false( DataCellType::timestamp == m_type, "{0}: Attempt to extract an timestamp from a non-timestamp", __func__ );
-			return uint32_to_ptime( m_value.m_timestamp );
+			return get<timestamp_t>( m_value );
 		}
 
 		std::string Variant::string( std::string locale ) const {
 			switch( m_type ) {
-			case DataCellType::integer:
-				return boost::lexical_cast<std::string>(integer( ));
-			case DataCellType::real:
-				return boost::lexical_cast<std::string>(real( ));
-			case DataCellType::timestamp:
-				return daw::string::ptime_to_string( timestamp( ), "%Y-%m-%d %H:%M:%S %Z", locale );
-			case DataCellType::empty_string:
-				return "";
-			case DataCellType::string:
-				dbg_throw_on_false<NullPtrAccessException>( 0 != m_value.m_string, "{0}: m_value.m_string is NULL and m_type is not an empty string. This should never happen", __func__ );
-				return std::string( m_value.m_string );
+				case DataCellType::integer:
+					return boost::lexical_cast<std::string>(integer( ));
+				case DataCellType::real:
+					return boost::lexical_cast<std::string>(real( ));
+				case DataCellType::timestamp:
+					return daw::string::ptime_to_string( timestamp( ), "%Y-%m-%d %H:%M:%S %Z", locale );
+				case DataCellType::empty_string:
+					return "";
+				case DataCellType::string:
+					dbg_throw_on_true<NullPtrAccessException>( get<daw::data::cstring>(m_value).is_null( ), "{0}: m_value is NULL and m_type is not an empty string. This should never happen", __func__ );
+					return get<daw::data::cstring>(m_value).to_string( );
 			}
 			throw AssertException( string_join( __func__, ": Unexpected control path taken.  This should never happen" ) );
 		}
 
 		bool Variant::empty( ) const noexcept {
-			return DataCellType::empty_string == m_type || (DataCellType::string == m_type && nullptr == m_value.m_string);
+			return !m_value || DataCellType::empty_string == m_type || (DataCellType::string == m_type && get<daw::data::cstring>(m_value).is_null( ));
 		}
 
-			DataCellType Variant::type( ) const noexcept {
+		DataCellType Variant::type( ) const noexcept {
 			if( DataCellType::empty_string == m_type ) {
 				return DataCellType::string;
 			}
@@ -234,56 +194,56 @@ namespace daw {
 
 		namespace impl {
 			template<typename ValueType>
-			inline int compare( const ValueType& lhs, const ValueType& rhs ) noexcept {
-				return lhs > rhs ? 1 : lhs < rhs ? -1 : 0;
-			}
+				inline int compare( const ValueType& lhs, const ValueType& rhs ) noexcept {
+					return lhs > rhs ? 1 : lhs < rhs ? -1 : 0;
+				}
 
-				template<>
-			inline int compare<std::string>( const std::string& lhs, const std::string& rhs ) noexcept {
-				return lhs.compare( rhs );
-			}
+			template<>
+				inline int compare<std::string>( const std::string& lhs, const std::string& rhs ) noexcept {
+					return lhs.compare( rhs );
+				}
 		}	// namespace impl
 
-		int Variant::compare( const Variant & lhs, const Variant & rhs ) {
+		int Variant::compare( Variant const & lhs, Variant const & rhs ) {
 			dbg_throw_on_false( lhs.type( ) == rhs.type( ), "{0}: Can only compare like Variant types", __func__ );
 			switch( lhs.type( ) ) {
-			case DataCellType::empty_string:
-				return 0;
-			case DataCellType::string:
-				return impl::compare( lhs.string( ), rhs.string( ) );
-			case DataCellType::integer:
-				return impl::compare( lhs.integer( ), rhs.integer( ) );
-			case DataCellType::real:
-				return impl::compare( lhs.real( ), rhs.real( ) );
-			case DataCellType::timestamp:
-				return impl::compare( lhs.timestamp( ), rhs.timestamp( ) );
-			default:
-				throw NotImplemented( string_join( __func__, ": Compare for datatype not implemented" ) );
+				case DataCellType::empty_string:
+					return 0;
+				case DataCellType::string:
+					return impl::compare( lhs.string( ), rhs.string( ) );
+				case DataCellType::integer:
+					return impl::compare( lhs.integer( ), rhs.integer( ) );
+				case DataCellType::real:
+					return impl::compare( lhs.real( ), rhs.real( ) );
+				case DataCellType::timestamp:
+					return impl::compare( lhs.timestamp( ), rhs.timestamp( ) );
+				default:
+					throw NotImplemented( string_join( __func__, ": Compare for datatype not implemented" ) );
 			}
 		}
 
-		bool Variant::operator==(const Variant & rhs) const {
-			return compare( *this, rhs ) == 0;
+		bool operator==(Variant const & lhs, Variant const & rhs) {
+			return Variant::compare( lhs, rhs ) == 0;
 		}
 
-		bool Variant::operator!=(const Variant & rhs) const {
-			return compare( *this, rhs ) != 0;
+		bool operator!=(Variant const & lhs, Variant const & rhs) {
+			return Variant::compare( lhs, rhs ) != 0;
 		}
 
-		bool Variant::operator<(const Variant & rhs) const {
-			return compare( *this, rhs ) < 0;
+		bool operator<(Variant const & lhs, Variant const & rhs) {
+			return Variant::compare( lhs, rhs ) < 0;
 		}
 
-		bool Variant::operator>(const Variant & rhs) const {
-			return compare( *this, rhs ) > 0;
+		bool operator>(Variant const & lhs, Variant const & rhs) {
+			return Variant::compare( lhs, rhs ) > 0;
 		}
 
-		bool Variant::operator<=(const Variant & rhs) const {
-			return compare( *this, rhs ) <= 0;
+		bool operator<=(Variant const & lhs, Variant const & rhs) {
+			return Variant::compare( lhs, rhs ) <= 0;
 		}
 
-		bool Variant::operator>=(const Variant & rhs) const {
-			return compare( *this, rhs ) >= 0;
+		bool operator>=(Variant const & lhs, Variant const & rhs) {
+			return Variant::compare( lhs, rhs ) >= 0;
 		}
 
 		void swap( Variant & lhs, Variant & rhs ) noexcept {
