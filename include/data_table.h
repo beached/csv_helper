@@ -1,7 +1,6 @@
-#pragma once
 // The MIT License (MIT)
 //
-// Copyright (c) 2013-2015 Darrell Wright
+// Copyright (c) 2013-2016 Darrell Wright
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files( the "Software" ), to deal
@@ -21,12 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#pragma once
+
 #include <boost/utility/string_ref.hpp>
 #include <functional>
 #include <list>
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+#include <daw/daw_traits.h>
+#include <daw/daw_expected.h>
 
 #include "defs.h"
 #if defined( USE_SPARSE_VECTOR ) && USE_SPARSE_VECTOR == 1
@@ -36,8 +40,6 @@
 #include "data_cell.h"
 #include "data_column.h"
 #include "data_types.h"
-#include <daw/daw_traits.h>
-#include <daw/daw_expected.h>
 
 namespace daw {
 	namespace data {

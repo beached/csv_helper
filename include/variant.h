@@ -33,6 +33,7 @@
 
 #include "data_types.h"
 #include "defs.h"
+
 namespace boost { namespace posix_time {
 		std::string to_string( boost::posix_time::ptime const & ts );
 	} 

@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2013-2015 Darrell Wright
+// Copyright (c) 2013-2016 Darrell Wright
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files( the "Software" ), to deal
@@ -25,23 +25,23 @@
 #include <cassert>
 #include <fstream>
 #include <functional>
-#include <functional>
 #include <iostream>
 #include <memory>
 #include <string>
 #include <unordered_map>
 
-#include <daw/daw_cstring.h>
-#include "data_algorithms.h"
-#include "data_cell.h"
-#include "data_column.h"
-#include "data_table.h"
 #include <daw/daw_algorithm.h>
-#include <daw/daw_string.h>
+#include <daw/daw_cstring.h>
 #include <daw/daw_exception.h>
 #include <daw/daw_expected.h>
 #include <daw/daw_memory_mapped_file.h>
 #include <daw/daw_newhelper.h>
+#include <daw/daw_string.h>
+
+#include "data_algorithms.h"
+#include "data_cell.h"
+#include "data_column.h"
+#include "data_table.h"
 #include "string_helpers.h"
 
 using daw::string::string_join;
