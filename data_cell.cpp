@@ -31,7 +31,6 @@
 #include <sstream>
 #include <string>
 #include <typeinfo>
-#include <unordered_map>
 
 #include <daw/daw_exception.h>
 #include <daw/daw_string.h>

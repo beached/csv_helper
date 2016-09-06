@@ -29,7 +29,6 @@
 #include <iomanip>
 #include <memory>
 #include <string>
-#include <unordered_map>
 
 #include "defs.h"
 #include "data_types.h"
