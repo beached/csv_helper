@@ -23,6 +23,7 @@
 #include <daw/daw_exception.h>
 #include <daw/daw_string.h>
 #include <daw/daw_newhelper.h>
+#include <daw/daw_operators.h>
 #include <daw/daw_variant.h>
 
 #include "string_helpers.h"
@@ -48,7 +49,7 @@ namespace daw {
 				m_value{ std::move( value.m_value ) } {
 
 			if( DataCellType::string == m_type ) {
-				get<daw::data::cstring>(value.m_value) = nullptr;
+				get<daw::cstring>(value.m_value) = nullptr;
 				value.m_type = DataCellType::empty_string;
 			}
 		}
@@ -80,7 +81,7 @@ namespace daw {
 		}
 
 		Variant::~Variant( ) noexcept {
-			if( m_value && DataCellType::string == m_type && get<daw::data::cstring>(m_value).is_null( ) ) {
+			if( m_value && DataCellType::string == m_type && get<daw::cstring>(m_value).is_null( ) ) {
 				try {
 					m_value.reset( );
 					m_type = DataCellType::empty_string;
@@ -101,16 +102,16 @@ namespace daw {
 			m_value{ std::move( value ) } { }
 
 		namespace {
-			cstring copy_when_needed( cstring value ) {
+			daw::cstring copy_when_needed( daw::cstring value ) {
 				if( !value.is_local_string( ) ) {
-					return cstring( value.get( ), true, value.size( ) );
+					return daw::cstring( value.get( ), true, value.size( ) );
 				} else {
 					return value;
 				}
 			}
 		}
 
-		Variant::Variant( cstring value ) : 
+		Variant::Variant( daw::cstring value ) : 
 			m_type{ value.is_null( ) ? DataCellType::empty_string : DataCellType::string },
 			m_value{ copy_when_needed( std::move( value ) ) } { };
 
@@ -140,14 +141,14 @@ namespace daw {
 				case DataCellType::empty_string:
 					return "";
 				case DataCellType::string:
-					dbg_throw_on_true<NullPtrAccessException>( get<daw::data::cstring>(m_value).is_null( ), "{0}: m_value is NULL and m_type is not an empty string. This should never happen", __func__ );
-					return get<daw::data::cstring>(m_value).to_string( );
+					dbg_throw_on_true<NullPtrAccessException>( get<daw::cstring>(m_value).is_null( ), "{0}: m_value is NULL and m_type is not an empty string. This should never happen", __func__ );
+					return get<daw::cstring>(m_value).to_string( );
 			}
 			throw AssertException( string_join( __func__, ": Unexpected control path taken.  This should never happen" ) );
 		}
 
 		bool Variant::empty( ) const noexcept {
-			return !m_value || DataCellType::empty_string == m_type || (DataCellType::string == m_type && get<daw::data::cstring>(m_value).is_null( ));
+			return !m_value || DataCellType::empty_string == m_type || (DataCellType::string == m_type && get<daw::cstring>(m_value).is_null( ));
 		}
 
 		DataCellType Variant::type( ) const noexcept {
@@ -187,29 +188,11 @@ namespace daw {
 			}
 		}
 
-		bool operator==(Variant const & lhs, Variant const & rhs) {
-			return Variant::compare( lhs, rhs ) == 0;
+		int Variant::compare( Variant const & rhs ) const {
+			return Variant::compare( *this, rhs );
 		}
 
-		bool operator!=(Variant const & lhs, Variant const & rhs) {
-			return Variant::compare( lhs, rhs ) != 0;
-		}
-
-		bool operator<(Variant const & lhs, Variant const & rhs) {
-			return Variant::compare( lhs, rhs ) < 0;
-		}
-
-		bool operator>(Variant const & lhs, Variant const & rhs) {
-			return Variant::compare( lhs, rhs ) > 0;
-		}
-
-		bool operator<=(Variant const & lhs, Variant const & rhs) {
-			return Variant::compare( lhs, rhs ) <= 0;
-		}
-
-		bool operator>=(Variant const & lhs, Variant const & rhs) {
-			return Variant::compare( lhs, rhs ) >= 0;
-		}
+		create_comparison_operators( Variant );
 
 		void swap( Variant & lhs, Variant & rhs ) noexcept {
 			lhs.swap( rhs );

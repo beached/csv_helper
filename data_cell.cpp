@@ -48,7 +48,7 @@ namespace daw {
 			const std::string s_emptystring = std::string( );
 			const std::string s_default_timestamp_format = "%Y-%m-%d %H:%M:%S %Z";
 
-			DataCellType get_cell_type( cstring& value, std::string locale_str ) {
+			DataCellType get_cell_type( daw::cstring & value, std::string locale_str ) {
 				// DAW erase
 
 				if( value.is_null( ) ) {
@@ -126,7 +126,7 @@ namespace daw {
 			swap( m_item, rhs.m_item );
 		}
 
-		DataCell::DataCell( cstring value ) : m_item( std::move( value ) ) { }
+		DataCell::DataCell( daw::cstring value ) : m_item( std::move( value ) ) { }
 		DataCell::DataCell( integer_t value ) : m_item( std::move( value ) ) { }
 		DataCell::DataCell( real_t value ) : m_item( std::move( value ) ) { }
 		DataCell::DataCell( timestamp_t value ) : m_item( std::move( value ) ) { }
@@ -191,7 +191,7 @@ namespace daw {
 			return m_item.empty( );
 		}
 
-			DataCell DataCell::from_string( cstring value, std::string locale_str ) {
+			DataCell DataCell::from_string( daw::cstring value, std::string locale_str ) {
 			// Check if is integer
 			const auto ct = get_cell_type( value, locale_str );
 			switch( ct ) {

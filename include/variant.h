@@ -43,7 +43,7 @@ namespace daw {
 
 		class Variant {
 			DataCellType m_type;
-			using value_t = daw::variant_t<integer_t, real_t, timestamp_t, daw::data::cstring>;
+			using value_t = daw::variant_t<integer_t, real_t, timestamp_t, daw::cstring>;
 			value_t m_value;
 		public:
 			Variant( );
@@ -58,7 +58,7 @@ namespace daw {
 			explicit Variant( integer_t value );
 			explicit Variant( real_t value );
 			explicit Variant( timestamp_t value );
-			explicit Variant( cstring value );
+			explicit Variant( daw::cstring value );
 
 			bool empty( ) const noexcept;
 			DataCellType type( ) const noexcept;
@@ -70,6 +70,7 @@ namespace daw {
 			std::string string( std::string locale = "" ) const;
 
 			static int compare( Variant const & lhs, Variant const & rhs );
+			int compare( Variant const & rhs ) const;
 
 			void swap( Variant & rhs ) noexcept;
 		};	// Variant

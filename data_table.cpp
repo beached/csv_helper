@@ -109,15 +109,15 @@ namespace daw {
 				}
 
 				/// <summary>If you call this you own it or leak it</summary>
-				cstring to_cstring( ) {
+				daw::cstring to_cstring( ) {
 					if( m_last == m_first ) {
-						return cstring( );
+						return daw::cstring{ };
 					}
 					const auto str_size = m_last - m_first + 1;
 					auto ptr = new_array_throw<char>( str_size + 1 );
 					ptr[str_size] = 0;
 					memcpy( ptr, m_buffer->data( m_first ), str_size );
-					cstring result( ptr );
+					daw::cstring result{ ptr };
 					result.take_ownership_of_data( );
 					return result;
 				}
