@@ -22,7 +22,7 @@
 
 
 #include <algorithm>
-#include <boost/utility/string_ref.hpp>
+#include <boost/utility/string_view.hpp>
 #include <vector>
 
 #include "data_column.h"
@@ -30,7 +30,7 @@
 
 namespace daw {
 	namespace data {
-		void convert_column_to_timestamp( DataColumn<std::vector<DataCell>> & column, bool is_nullable, boost::string_ref format ) {
+		void convert_column_to_timestamp( DataColumn<std::vector<DataCell>> & column, bool is_nullable, boost::string_view format ) {
 			std::transform( column.begin( ), column.end( ), column.begin( ), [format, is_nullable]( DataCell const & cell ) -> daw::data::DataCell {
 				if( cell.empty( ) && is_nullable ) {
 					return cell;

@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include <boost/utility/string_ref.hpp>
+#include <boost/utility/string_view.hpp>
 #include <functional>
 #include <string>
 #include <vector>
@@ -214,6 +214,6 @@ namespace daw {
 			}
 		};	// DataColumn
 
-		void convert_column_to_timestamp( DataColumn<std::vector<DataCell>> & column, bool is_nullable = true, boost::string_ref format = "%d/%m/%y %H:%M:%S" );
+		void convert_column_to_timestamp( DataColumn<std::vector<DataCell>> & column, bool is_nullable = true, boost::string_view format = "%d/%m/%y %H:%M:%S" );
 	}	// namespace data
 }	// namespace daw

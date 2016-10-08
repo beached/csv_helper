@@ -21,7 +21,7 @@
 // SOFTWARE.
 
 #include <algorithm>
-#include <boost/utility/string_ref.hpp>
+#include <boost/utility/string_view.hpp>
 #include <cassert>
 #include <fstream>
 #include <functional>
@@ -94,7 +94,7 @@ namespace daw {
 					size_t& last( ) noexcept {
 					return m_last;
 				}
-				friend void trim( CellReference&, boost::string_ref );
+				friend void trim( CellReference&, boost::string_view );
 				friend void clean_cell_data( CellReference&, const char );
 			public:
 				CellReference( daw::filesystem::MemoryMappedFile<char>& buffer, size_t first = 0, size_t last = 0 ) : m_first( first ), m_last( last ), m_buffer( &buffer ), m_empty( true ) { }
@@ -144,7 +144,7 @@ namespace daw {
 				}
 			};
 
-			inline void trim( CellReference& current_cell, boost::string_ref chars = " \f\n\r\t\v" ) {
+			inline void trim( CellReference& current_cell, boost::string_view chars = " \f\n\r\t\v" ) {
 				using daw::string::in;
 				while( current_cell.first( ) < current_cell.last( ) && in( current_cell.get( current_cell.first( ) ), chars ) ) {
 					++current_cell.first( );
@@ -436,11 +436,11 @@ namespace daw {
 			return item( column );
 		}
 
-		DataTable::reference DataTable::operator[]( boost::string_ref column ) {
+		DataTable::reference DataTable::operator[]( boost::string_view column ) {
 			return item( column );
 		}
 
-		DataTable::const_reference DataTable::operator[]( boost::string_ref column ) const {
+		DataTable::const_reference DataTable::operator[]( boost::string_view column ) const {
 			return item( column );
 		}
 
@@ -460,15 +460,15 @@ namespace daw {
 			return m_items[column];
 		}
 
-		const DataTable::value_type& DataTable::item( boost::string_ref column ) const {
+		const DataTable::value_type& DataTable::item( boost::string_view column ) const {
 			return item( get_column_index( column ) );
 		}
 
-		DataTable::value_type& DataTable::item( boost::string_ref column ) {
+		DataTable::value_type& DataTable::item( boost::string_view column ) {
 			return item( get_column_index( column ) );
 		}
 
-		DataTable::size_type DataTable::get_column_index( boost::string_ref column_name ) const {
+		DataTable::size_type DataTable::get_column_index( boost::string_view column_name ) const {
 			using std::begin;
 			using std::end;
 			using daw::algorithm::find_if;

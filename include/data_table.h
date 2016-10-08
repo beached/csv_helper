@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include <boost/utility/string_ref.hpp>
+#include <boost/utility/string_view.hpp>
 #include <functional>
 #include <list>
 #include <string>
@@ -73,20 +73,20 @@ namespace daw {
 			DataTable( const values_type& columns );
 
 			reference item( size_type const & column );
-			reference item( boost::string_ref column );
+			reference item( boost::string_view column );
 			const_reference item( size_type const & column ) const;
-			const_reference item( boost::string_ref column ) const;
+			const_reference item( boost::string_view column ) const;
 
 			reference operator[]( size_type const & pos );
 			const_reference operator[]( size_type const & pos ) const;
 
-			reference operator[]( boost::string_ref column );
-			const_reference operator[]( boost::string_ref column ) const;
+			reference operator[]( boost::string_view column );
+			const_reference operator[]( boost::string_view column ) const;
 
 			size_type size( ) const noexcept;
 			bool empty( ) const noexcept;
 
-			size_type get_column_index( boost::string_ref col ) const;
+			size_type get_column_index( boost::string_view col ) const;
 
 			iterator begin( );
 			iterator end( );
