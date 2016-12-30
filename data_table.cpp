@@ -372,31 +372,31 @@ namespace daw {
 			return m_progress_cb;
 		}
 
-		Expected<DataTable> parse_csv_data( parse_csv_data_param const & param ) {
+		expected_t<DataTable> parse_csv_data( parse_csv_data_param const & param ) {
 			return parse_csv_data( param.file_name( ), param.header_row( ), param.column_filter( ), param.progress_cb( ) );
 		}
 
-		Expected<DataTable> parse_csv_data( std::string const & file_name, const DataTable::size_type header_row, const std::function<bool( std::string const & )> column_filter, std::function<void( std::string )> progress_cb ) {
+		expected_t<DataTable> parse_csv_data( std::string const & file_name, const DataTable::size_type header_row, const std::function<bool( std::string const & )> column_filter, std::function<void( std::string )> progress_cb ) {
 			std::unique_ptr<daw::filesystem::MemoryMappedFile<char>> buffer( nullptr );
 			try {
 				buffer = std::make_unique<daw::filesystem::MemoryMappedFile<char>>( file_name, true );
 			} catch( const std::exception& ex ) {
-				return Expected<DataTable>::from_exception( ex );
+				return expected_t<DataTable>::from_exception( ex );
 			} catch( ... ) {
-				return Expected<DataTable>::from_exception( std::current_exception( ) );
+				return expected_t<DataTable>::from_exception( std::current_exception( ) );
 			}
 
 			if( nullptr == buffer.get( ) || !buffer->is_open( ) ) {
-				return Expected<DataTable>::from_exception( std::runtime_error( string_join( __func__, ": Unrecoverable error opening file" ) ) );
+				return expected_t<DataTable>::from_exception( std::runtime_error( string_join( __func__, ": Unrecoverable error opening file" ) ) );
 			} else if( 0 >= buffer->size( ) ) {
-				return Expected<DataTable>::from_exception( std::runtime_error( string_join( __func__, ": MemoryMappedFile does not have data" ) ) );
+				return expected_t<DataTable>::from_exception( std::runtime_error( string_join( __func__, ": MemoryMappedFile does not have data" ) ) );
 			}
 			const auto start_row = header_row;	// 0 > header_row ? 0 : header_row;
 			try {
 				auto result = deleniate_rows( *buffer, start_row, column_filter, progress_cb );
 				return result;
 			} catch( const std::exception& ex ) {
-				return Expected<DataTable>::from_exception( ex );
+				return expected_t<DataTable>::from_exception( ex );
 			}
 		}
 

@@ -146,8 +146,8 @@ namespace daw {
 		/// <param name="header_row">Numeric row in file that contains the header.  This will be the first line imported</param>
 		/// <param name="column_filter">A function that returns true if the column name is allowed</param>
 		/// <returns>A <c>DataTable</c> with the contents of the CSV File</returns>
-		Expected<DataTable> parse_csv_data( const std::string &file_name, const DataTable::size_type header_row, const std::function<bool( const std::string& )> column_filter = nullptr, std::function<void( std::string )> progress_cb = nullptr );
-		Expected<DataTable> parse_csv_data( const parse_csv_data_param& param );
+		expected_t<DataTable> parse_csv_data( const std::string &file_name, const DataTable::size_type header_row, const std::function<bool( const std::string& )> column_filter = nullptr, std::function<void( std::string )> progress_cb = nullptr );
+		expected_t<DataTable> parse_csv_data( const parse_csv_data_param& param );
 
 		namespace algorithm {
 			void erase_row( DataTable& table, const DataTable::size_type row );
