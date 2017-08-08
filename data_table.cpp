@@ -76,7 +76,7 @@ namespace daw {
 			private:
 				size_t m_first;
 				size_t m_last;
-				daw::filesystem::MemoryMappedFile<char>* m_buffer;
+				daw::filesystem::memory_mapped_file_t<char>* m_buffer;
 				bool m_empty;
 
 				char& get( size_t pos ) {
@@ -97,7 +97,7 @@ namespace daw {
 				friend void trim( CellReference&, boost::string_view );
 				friend void clean_cell_data( CellReference&, const char );
 			public:
-				CellReference( daw::filesystem::MemoryMappedFile<char>& buffer, size_t first = 0, size_t last = 0 ) : m_first( first ), m_last( last ), m_buffer( &buffer ), m_empty( true ) { }
+				CellReference( daw::filesystem::memory_mapped_file_t<char>& buffer, size_t first = 0, size_t last = 0 ) : m_first( first ), m_last( last ), m_buffer( &buffer ), m_empty( true ) { }
 
 
 				std::string to_string( ) const {
@@ -225,7 +225,7 @@ namespace daw {
 			/// <param name="header_row">Numeric row in file that contains the header.  This will be the first line imported</param>
 			/// <param name="column_filter">A function that returns true if the column name is allowed</param>
 			/// <returns>A <c>DataTable</c> with the contents of the CSV File</returns>
-			DataTable deleniate_rows( daw::filesystem::MemoryMappedFile<char>& buffer, const DataTable::size_type header_row, const std::function<bool( std::string const & )> column_filter, std::function<void( std::string )> progress_cb ) {
+			DataTable deleniate_rows( daw::filesystem::memory_mapped_file_t<char>& buffer, const DataTable::size_type header_row, const std::function<bool( std::string const & )> column_filter, std::function<void( std::string )> progress_cb ) {
 				if( !progress_cb ) {
 					progress_cb = []( std::string ) { };
 				}
@@ -377,9 +377,9 @@ namespace daw {
 		}
 
 		expected_t<DataTable> parse_csv_data( std::string const & file_name, const DataTable::size_type header_row, const std::function<bool( std::string const & )> column_filter, std::function<void( std::string )> progress_cb ) {
-			std::unique_ptr<daw::filesystem::MemoryMappedFile<char>> buffer( nullptr );
+			std::unique_ptr<daw::filesystem::memory_mapped_file_t<char>> buffer( nullptr );
 			try {
-				buffer = std::make_unique<daw::filesystem::MemoryMappedFile<char>>( file_name, true );
+				buffer = std::make_unique<daw::filesystem::memory_mapped_file_t<char>>( file_name, true );
 			} catch( const std::exception& ex ) {
 				return expected_t<DataTable>::from_exception( ex );
 			} catch( ... ) {
