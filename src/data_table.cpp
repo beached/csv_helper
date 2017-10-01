@@ -104,7 +104,7 @@ namespace daw {
 					if( m_empty || m_first == m_last ) {
 						return "";
 					}
-					const auto str_size = m_last - m_first + 1;
+					auto const str_size = m_last - m_first + 1;
 					return std::string( m_buffer->data( m_first ), str_size );
 				}
 
@@ -113,7 +113,7 @@ namespace daw {
 					if( m_last == m_first ) {
 						return daw::cstring{ };
 					}
-					const auto str_size = m_last - m_first + 1;
+					auto const str_size = m_last - m_first + 1;
 					auto ptr = new_array_throw<char>( str_size + 1 );
 					ptr[str_size] = 0;
 					memcpy( ptr, m_buffer->data( m_first ), str_size );
@@ -167,7 +167,7 @@ namespace daw {
 
 			template<typename FunctionType, typename FilePositionType>
 			void display_progress( FunctionType progress_cb, const FilePositionType file_size, const FilePositionType file_pos, boost::posix_time::ptime start_time ) {
-				const auto byte_postfix = []( double value, char& postfix ) {
+				auto const byte_postfix = []( double value, char& postfix ) {
 					double divisor = 1.0;
 					if( value >= (divisor = 1024.0*1024.0*1024.0*1024.0*1024.0) ) {
 						postfix = 'P';
@@ -187,9 +187,9 @@ namespace daw {
 				};
 
 				if( nullptr != progress_cb ) {	// Progress display
-					const auto import_duration = boost::posix_time::second_clock::local_time( ) - start_time;
+					auto const import_duration = boost::posix_time::second_clock::local_time( ) - start_time;
 					char file_size_postfix = ' ';
-					const auto file_size_fmt = byte_postfix( static_cast<double>(file_size), file_size_postfix );
+					auto const file_size_fmt = byte_postfix( static_cast<double>(file_size), file_size_postfix );
 					if( import_duration.total_seconds( ) >= 1 ) {
 						const std::string progress = [&]( ) {
 							static std::stringstream ss;
@@ -198,7 +198,7 @@ namespace daw {
 							ss.fill( '0' );
 
 							char postfix = ' ';
-							const auto file_pos_fmt = byte_postfix( static_cast<double>(file_pos), postfix );
+							auto const file_pos_fmt = byte_postfix( static_cast<double>(file_pos), postfix );
 							ss.precision( 2 );
 							ss << "Loading CSV Data... " << file_pos_fmt << postfix << "B of " << file_size_fmt << file_size_postfix << "B (";
 
@@ -233,10 +233,10 @@ namespace daw {
 				DataTable result_datatable;
 
 				{
-					const auto file_size = static_cast<DataTable::size_type>(buffer.size( ));
+					auto const file_size = static_cast<DataTable::size_type>(buffer.size( ));
 					static const char delimiter = ',';
 					static const char string_separator = '"';
-					const auto start_time = boost::posix_time::second_clock::local_time( );
+					auto const start_time = boost::posix_time::second_clock::local_time( );
 					CounterStack<DataTable::size_type> counter_stack;
 					DataTable::size_type current_row_in_file = 0;
 					DataTable::size_type current_column_no = 0;
@@ -323,7 +323,7 @@ namespace daw {
 					// Verify that all columns are of equal length and append empty strings if not
 
 					{
-						const auto column_size = [&result_datatable]( ) {
+						auto const column_size = [&result_datatable]( ) {
 							DataTable::size_type max_size = 0;
 							for( auto const & column : result_datatable ) {
 								if( column.size( ) > max_size ) {
@@ -333,7 +333,7 @@ namespace daw {
 							return max_size;
 						}();
 						for( auto & column : result_datatable ) {
-							const auto num_to_add = column_size - column.size( );
+							auto const num_to_add = column_size - column.size( );
 							if( 0 < num_to_add ) {
 								std::cerr << "Warning: While parsing table a column was missing " << num_to_add << " row(s)\n";
 							}
@@ -376,28 +376,22 @@ namespace daw {
 			return parse_csv_data( param.file_name( ), param.header_row( ), param.column_filter( ), param.progress_cb( ) );
 		}
 
-		expected_t<DataTable> parse_csv_data( std::string const & file_name, const DataTable::size_type header_row, const std::function<bool( std::string const & )> column_filter, std::function<void( std::string )> progress_cb ) {
-			std::unique_ptr<daw::filesystem::memory_mapped_file_t<char>> buffer( nullptr );
-			try {
-				buffer = std::make_unique<daw::filesystem::memory_mapped_file_t<char>>( file_name, true );
-			} catch( const std::exception& ex ) {
-				return expected_t<DataTable>::from_exception( ex );
-			} catch( ... ) {
-				return expected_t<DataTable>::from_exception( std::current_exception( ) );
-			}
+		expected_t<DataTable> parse_csv_data( std::string const &file_name, const DataTable::size_type header_row,
+		                                      const std::function<bool( std::string const & )> column_filter,
+		                                      std::function<void( std::string )> progress_cb ) {
 
-			if( nullptr == buffer.get( ) || !buffer->is_open( ) ) {
-				return expected_t<DataTable>::from_exception( std::runtime_error( string_join( __func__, ": Unrecoverable error opening file" ) ) );
-			} else if( 0 >= buffer->size( ) ) {
-				return expected_t<DataTable>::from_exception( std::runtime_error( string_join( __func__, ": MemoryMappedFile does not have data" ) ) );
-			}
-			const auto start_row = header_row;	// 0 > header_row ? 0 : header_row;
-			try {
+			return daw::expected_from_code<DataTable>( [&]( ) {
+				std::unique_ptr<daw::filesystem::memory_mapped_file_t<char>> buffer{nullptr};
+				buffer = std::make_unique<daw::filesystem::memory_mapped_file_t<char>>( file_name, true );
+				if( nullptr == buffer.get( ) || !buffer->is_open( ) ) {
+					throw std::runtime_error( string_join( __func__, ": Unrecoverable error opening file" ) );
+				} else if( 0 >= buffer->size( ) ) {
+					throw std::runtime_error( string_join( __func__, ": MemoryMappedFile does not have data" ) );
+				}
+				auto const start_row = header_row; // 0 > header_row ? 0 : header_row;
 				auto result = deleniate_rows( *buffer, start_row, column_filter, progress_cb );
 				return result;
-			} catch( const std::exception& ex ) {
-				return expected_t<DataTable>::from_exception( ex );
-			}
+			} );
 		}
 
 		// DataTable

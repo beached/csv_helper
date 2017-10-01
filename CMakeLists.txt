@@ -22,26 +22,22 @@ else( )
 	endif()
 endif( )
 
-if( ${BINARY_DIR} MATCHES "/binary$" )
-    set( DEP_BINARY_DIR "${CMAKE_BINARY_DIR}" )
-else( )
-    set( DEP_BINARY_DIR "${CMAKE_BINARY_DIR}/binary" )
-endif( )
+externalproject_add(
+    header_libraries_prj
+    GIT_REPOSITORY "https://github.com/beached/header_libraries.git"
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/dependencies/header_libraries"
+    GIT_TAG "master"
+    INSTALL_DIR "${CMAKE_BINARY_DIR}/install"
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install
+)
 
-ExternalProject_Add( 
-	headlibsprj
-	GIT_REPOSITORY "https://github.com/beached/header_libraries.git"
-	SOURCE_DIR "${DEP_BINARY_DIR}/deps/headlibs"
-	BINARY_DIR "${DEP_BINARY_DIR}"
-	INSTALL_DIR "${DEP_BINARY_DIR}/inst"
-	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${DEP_BINARY_DIR}/inst
-	GIT_TAG "master"
-	PATCH_COMMAND ""
-	TEST_COMMAND ""
- )
+include_directories( SYSTEM "${CMAKE_BINARY_DIR}/install/include" )
+include_directories( ${HEADER_FOLDER} )
 
-include_directories( SYSTEM "${DEP_BINARY_DIR}/inst/include" )
 include_directories( SYSTEM ${Boost_INCLUDE_DIRS} )
+
+link_directories( "${CMAKE_BINARY_DIR}/install/lib" )
+link_directories( ${Boost_LIBRARY_DIRS} )
 
 set( HEADER_FOLDER "include" )
 set( SOURCE_FOLDER "src" )
@@ -71,8 +67,7 @@ set( SOURCE_FILES
 )
 
 add_library( csv_helper STATIC ${HEADER_FILES} ${SOURCE_FILES} )
-
-add_dependencies( csv_helper headlibsprj )
+add_dependencies( csv_helper header_libraries_prj )
 
 install( TARGETS csv_helper DESTINATION lib )
 install( DIRECTORY ${HEADER_FOLDER}/ DESTINATION include/daw/csv_helper )
