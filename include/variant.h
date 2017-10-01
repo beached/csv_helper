@@ -40,20 +40,19 @@ namespace boost { namespace posix_time {
 }
 namespace daw {
 	namespace data {
-
 		class Variant {
 			DataCellType m_type;
 			using value_t = daw::variant_t<integer_t, real_t, timestamp_t, daw::cstring>;
 			value_t m_value;
 		public:
 			Variant( );
+			~Variant( );
 
-			Variant( Variant const & other );
-			Variant& operator=(Variant const & rhs);
+			Variant( Variant const & other ) = default;
+			Variant& operator=(Variant const & rhs) = default;
 
 			Variant( Variant&& value ) noexcept;
 			Variant& operator=(Variant && rhs) noexcept;
-			~Variant( ) noexcept;
 
 			explicit Variant( integer_t value );
 			explicit Variant( real_t value );
