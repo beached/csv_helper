@@ -44,27 +44,30 @@ include_directories( SYSTEM "${DEP_BINARY_DIR}/inst/include" )
 include_directories( SYSTEM ${Boost_INCLUDE_DIRS} )
 
 set( HEADER_FOLDER "include" )
+set( SOURCE_FOLDER "src" )
+set( TEST_FOLDER "tests" )
+
 include_directories( ${HEADER_FOLDER} )
 
 set( HEADER_FILES
-		${HEADER_FOLDER}/data_algorithms.h
-		${HEADER_FOLDER}/data_cell.h
-		${HEADER_FOLDER}/data_column.h
-		${HEADER_FOLDER}/data_common.h
-		${HEADER_FOLDER}/data_container.h
-		${HEADER_FOLDER}/data_table.h
-		${HEADER_FOLDER}/data_types.h
-		${HEADER_FOLDER}/defs.h
-		${HEADER_FOLDER}/string_helpers.h
-		${HEADER_FOLDER}/variant.h
+	${HEADER_FOLDER}/data_algorithms.h
+	${HEADER_FOLDER}/data_cell.h
+	${HEADER_FOLDER}/data_column.h
+	${HEADER_FOLDER}/data_common.h
+	${HEADER_FOLDER}/data_container.h
+	${HEADER_FOLDER}/data_table.h
+	${HEADER_FOLDER}/data_types.h
+	${HEADER_FOLDER}/defs.h
+	${HEADER_FOLDER}/string_helpers.h
+	${HEADER_FOLDER}/variant.h
 )
 
 set( SOURCE_FILES
-		data_cell.cpp
-		data_column.cpp
-		data_table.cpp
-		string_helpers.cpp
-		variant.cpp
+	${SOURCE_FOLDER}/data_cell.cpp
+	${SOURCE_FOLDER}/data_column.cpp
+	${SOURCE_FOLDER}/data_table.cpp
+	${SOURCE_FOLDER}/string_helpers.cpp
+	${SOURCE_FOLDER}/variant.cpp
 )
 
 add_library( csv_helper STATIC ${HEADER_FILES} ${SOURCE_FILES} )
